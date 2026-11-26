@@ -16,7 +16,8 @@ const tracks = [
 		album: "After Hours",
 		durationMs: 200_000,
 		thumbnail: svgArt(
-			"<defs><linearGradient id='g' x1='0' y1='1' x2='1' y2='0'><stop offset='0' stop-color='#e8173c'/><stop offset='1' stop-color='#ffb02e'/></linearGradient></defs><rect width='120' height='120' fill='url(#g)'/><rect x='34' y='34' width='52' height='52' rx='10' fill='rgba(0,0,0,.3)'/>",
+			// A pastel mesh: butter yellow, mint and sky blue.
+			"<defs><filter id='b' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur stdDeviation='16'/></filter></defs><rect width='120' height='120' fill='#ffe27a'/><g filter='url(#b)'><circle cx='100' cy='100' r='44' fill='#7cc8ff'/><circle cx='16' cy='96' r='38' fill='#8fe3b8'/><circle cx='96' cy='14' r='30' fill='#fff4b8'/><circle cx='56' cy='62' r='20' fill='#b9f0d6'/></g>",
 		),
 	},
 ];

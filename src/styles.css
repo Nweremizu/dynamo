@@ -274,5 +274,6 @@ body:has([data-settings]) {
 
 /* Browser preview wallpaper (never applied inside Tauri). */
 body.preview {
-	background: radial-gradient(120% 90% at 80% 100%, #3b3a6b 0%, #16162a 55%, #0d0d17 100%);
+	/* A light paper wallpaper: the black island reads at a glance, like on a bright desktop. */
+	background: radial-gradient(120% 100% at 15% 0%, #fbf8f2 0%, #f1ebe0 55%, #e7dfd1 100%);
 }

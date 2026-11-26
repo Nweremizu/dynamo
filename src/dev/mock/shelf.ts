@@ -3,7 +3,7 @@ import { art, defineMock, provider } from "./kit";
 type Item = { path: string; name: string; isDir: boolean; ext: string; thumb: string | null };
 
 const fromPath = (path: string): Item => {
-	const name = path.split(/[/]/).pop() ?? path;
+	const name = path.split(/[\\/]/).pop() ?? path;
 	const dot = name.lastIndexOf(".");
 	return { path, name, isDir: dot < 1, ext: dot < 1 ? "" : name.slice(dot + 1), thumb: null };
 };
@@ -14,9 +14,9 @@ const state = provider("shelf", {
 	downloads: [] as Download[],
 	finished: null as string | null,
 	items: [
-		fromPath("C:UsersmeDesktop\report.pdf"),
-		fromPath("C:UsersmePictures"),
-		{ ...fromPath("C:UsersmeDesktopcover.png"), thumb: art },
+		fromPath("C:\\Users\\me\\Desktop\\report.pdf"),
+		fromPath("C:\\Users\\me\\Pictures"),
+		{ ...fromPath("C:\\Users\\me\\Desktop\\cover.png"), thumb: art },
 	],
 });
 
@@ -42,7 +42,7 @@ export const shelf = defineMock({
 					...s,
 					downloads: [],
 					finished: `${Date.now()}:setup.exe`,
-					items: [fromPath("C:UsersmeDownloadssetup.exe"), ...s.items],
+					items: [fromPath("C:\\Users\\me\\Downloads\\setup.exe"), ...s.items],
 				})),
 		},
 		{
@@ -51,7 +51,7 @@ export const shelf = defineMock({
 			run: () =>
 				state.set((s) => ({
 					...s,
-					items: [...s.items, fromPath(`C:UsersmeDownloads\file-${s.items.length + 1}.zip`)],
+					items: [...s.items, fromPath(`C:\\Users\\me\\Downloads\\file-${s.items.length + 1}.zip`)],
 				})),
 		},
 	],

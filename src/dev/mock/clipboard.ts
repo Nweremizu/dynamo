@@ -49,7 +49,7 @@ export const clipboard = defineMock({
 					thumb: art,
 					width: 1920,
 					height: 1080,
-					path: "C:shot.png",
+					path: "C:\\Users\\me\\Pictures\\Screenshots\\shot.png",
 					screenshot: true,
 					source: "Snipping Tool",
 				}),

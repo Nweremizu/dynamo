@@ -95,6 +95,7 @@ export function logCall(call: Omit<LoggedCall, "id">) {
 export const svgArt = (body: string) =>
 	`data:image/svg+xml;utf8,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'>${body}</svg>`)}`;
 
+/** A mesh gradient: vivid blue with green, yellow and cyan blobs melting into it. */
 export const art = svgArt(
-	"<defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#ff6a3d'/><stop offset='1' stop-color='#7b2ff7'/></linearGradient></defs><rect width='120' height='120' fill='url(#g)'/><circle cx='60' cy='60' r='26' fill='rgba(0,0,0,.35)'/>",
+	"<defs><filter id='b' x='-50%' y='-50%' width='200%' height='200%'><feGaussianBlur stdDeviation='16'/></filter></defs><rect width='120' height='120' fill='#1f63ff'/><g filter='url(#b)'><circle cx='18' cy='104' r='46' fill='#19d27c'/><circle cx='106' cy='16' r='40' fill='#ffd60a'/><circle cx='104' cy='106' r='34' fill='#2ee6f0'/><circle cx='22' cy='14' r='30' fill='#3a5bff'/><circle cx='62' cy='60' r='18' fill='#b6f36a'/></g>",
 );

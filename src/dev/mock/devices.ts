@@ -26,7 +26,7 @@ export const privacy = defineMock({
 const cell = (percent: number, charging = false) => ({ percent, charging, stale: false });
 const budsState = provider("fitswise", {
 	status: "connected",
-	name: "Bruno's Beats Fit Pro",
+	name: "Beats Fit Pro",
 	battery: { left: cell(82), right: cell(76), case: cell(54, true) },
 	inCase: { left: false, right: false },
 	caseOpen: false,
