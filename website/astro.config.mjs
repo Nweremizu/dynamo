@@ -1,7 +1,9 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-	site: "https://island.heyyczer.com",
+	// GitHub Pages for Nweremizu/dynamo; with a custom domain, set `site` to it and drop `base`.
+	site: "https://nweremizu.github.io",
+	base: "/dynamo",
 	trailingSlash: "ignore",
 	i18n: {
 		defaultLocale: "en",

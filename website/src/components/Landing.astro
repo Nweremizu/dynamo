@@ -2,20 +2,25 @@
 import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Island from "./Island.astro";
-import { DOWNLOAD, REPO, STORE, href, strings, type Lang } from "../i18n";
+import { DOWNLOAD, LINKS, REPO, asset, href, strings, type Lang } from "../i18n";
 import pkg from "../../../package.json";
 
-import demo from "../../../docs/demo.gif";
-
-import agents from "../../../docs/screenshots/agents.png";
-import music from "../../../docs/screenshots/music.png";
-import compact from "../../../docs/screenshots/compact.png";
-import launcher from "../../../docs/screenshots/launcher.png";
-import shelf from "../../../docs/screenshots/shelf.png";
-import lookDynamic from "../../../docs/screenshots/look-dynamic.png";
-import lookClassic from "../../../docs/screenshots/look-windows-classic.png";
-import lookMono from "../../../docs/screenshots/look-windows-mono.png";
-import lookAurora from "../../../docs/screenshots/look-windows-aurora.png";
+// Captured from the browser preview with a transparent backdrop, so each island
+// hangs from the top of its panel like it does from the top of the screen.
+import agents from "../assets/shots/agents.png";
+import music from "../assets/shots/music.png";
+import pomodoro from "../assets/shots/pomodoro.png";
+import notes from "../assets/shots/notes.png";
+import privacy from "../assets/shots/privacy.png";
+import shelf from "../assets/shots/shelf.png";
+import calendar from "../assets/shots/calendar.png";
+import notifications from "../assets/shots/notifications.png";
+import clipboard from "../assets/shots/clipboard.png";
+import fitswise from "../assets/shots/fitswise.png";
+import lookDynamic from "../assets/shots/look-dynamic.png";
+import lookClassic from "../assets/shots/look-windows-classic.png";
+import lookMono from "../assets/shots/look-windows-mono.png";
+import lookAurora from "../assets/shots/look-windows-aurora.png";
 
 interface Props {
   lang: Lang;
@@ -23,76 +28,110 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = strings[lang];
+const tiles = t.modules.tiles;
 
-const features = [
-  { ...t.features.agents, src: agents },
-  { ...t.features.music, src: music },
-  { ...t.features.ask, src: compact },
-  { ...t.features.launcher, src: launcher },
-  { ...t.features.shelf, src: shelf },
+/** The bento: six columns; the agents tile spans two rows, beside music and Pomodoro. */
+const bento = [
+  { ...tiles.agents, src: agents, span: 4, tall: true },
+  { ...tiles.music, src: music, span: 2 },
+  { ...tiles.pomodoro, src: pomodoro, span: 2 },
+  { ...tiles.notes, src: notes, span: 2 },
+  { ...tiles.privacy, src: privacy, span: 2 },
+  { ...tiles.notifications, src: notifications, span: 2 },
+  { ...tiles.shelf, src: shelf, span: 3 },
+  { ...tiles.calendar, src: calendar, span: 3 },
+  { ...tiles.clipboard, src: clipboard, span: 3 },
+  { ...tiles.fitswise, src: fitswise, span: 3 },
 ];
 const looks = [lookDynamic, lookClassic, lookMono, lookAurora];
+
+const curl = `curl -X POST http://127.0.0.1:5199/notify \\
+  -H "Content-Type: application/json" \\
+  -d '{"title":"Deploy done","icon":"check"}'`;
 ---
 
-<Base lang={lang} title={t.meta.title} page="">
+<Base lang={lang} title={t.meta.title} page="" island>
   <header class="hero">
     <Island lang={lang} />
     <div class="wrap hero-copy">
+      <p class="pill"><span class="live" aria-hidden="true"></span>{t.hero.eyebrow}</p>
       <h1>{t.hero.title}</h1>
       <p class="lead">{t.hero.lead}</p>
       <div class="cta">
-        <a class="button primary" href={DOWNLOAD}>{t.hero.download}</a>
-        <a class="store" href={STORE} target="_self">
-          <img src={`https://get.microsoft.com/images/${t.hero.storeBadge}%20light.svg`} height="48" alt={t.hero.store} />
+        <a class="button primary" href={DOWNLOAD}>
+          <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M0 0h7.5v7.5H0zM8.5 0H16v7.5H8.5zM0 8.5h7.5V16H0zM8.5 8.5H16V16H8.5z" /></svg>
+          {t.hero.download}
         </a>
-        <a class="button" href={REPO}>{t.hero.github}</a>
+        <a class="button" href={REPO}>
+          <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 0Z" /></svg>
+          {t.hero.github}
+        </a>
       </div>
-      <p class="note">{t.hero.note}</p>
+      <p class="hero-meta">
+        <span>v{pkg.version}</span>
+        {t.hero.meta.map((m) => <span>{m}</span>)}
+      </p>
     </div>
   </header>
 
-  <main>
-    <section class="wrap demo">
-      <h2 class="visually-hidden">{t.demo.title}</h2>
-      <img class="shot demo-gif" src={demo.src} width={demo.width} height={demo.height} alt={t.demo.alt} loading="lazy" decoding="async" />
-    </section>
-
-    <section class="wrap features">
-      {
-        features.map((f) => (
-          <article class="feature">
-            <div class="feature-copy">
-              <h2>{f.title}</h2>
-              <p>{f.body}</p>
-            </div>
-            <Image class="shot" src={f.src} quality={90} alt={f.alt} widths={[640, f.src.width]} sizes="(max-width: 860px) 100vw, 620px" />
-          </article>
-        ))
-      }
-    </section>
-
-    <section class="wrap looks">
+  <main id="main">
+    <section class="wrap demo" aria-labelledby="demo-title">
       <div class="section-head">
-        <h2>{t.looks.title}</h2>
-        <p>{t.looks.body}</p>
+        <div>
+          <p class="eyebrow">{t.demo.eyebrow}</p>
+          <h2 id="demo-title">{t.demo.title}</h2>
+        </div>
+        <p>{t.demo.body}</p>
       </div>
-      <div class="looks-grid">
+      <div class="card frame">
+        <video class="demo-video" autoplay muted loop playsinline preload="metadata" width="1600" height="600" poster={asset("media/demo-poster.jpg")} aria-label={t.demo.alt}>
+          <source src={asset("media/demo.mp4")} type="video/mp4" />
+        </video>
+      </div>
+    </section>
+
+    <section class="wrap stats">
+      <dl>
         {
-          looks.map((src, i) => (
-            <figure>
-              <Image class="shot" src={src} quality={90} alt={t.looks.items[i]} />
-              <figcaption>{t.looks.items[i]}</figcaption>
-            </figure>
+          t.stats.map(([figure, label]) => (
+            <div>
+              <dt>{figure}</dt>
+              <dd>{label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </section>
+
+    <section class="wrap section" id="modules" aria-labelledby="modules-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t.modules.eyebrow}</p>
+          <h2 id="modules-title">{t.modules.title}</h2>
+        </div>
+        <p>{t.modules.body}</p>
+      </div>
+
+      <div class="bento">
+        {
+          bento.map((tile) => (
+            <article class:list={["card", "tile", `span-${tile.span}`, { tall: tile.tall }]}>
+              <div class="tile-art">
+                <Image src={tile.src} alt={tile.alt} quality={88} widths={[560, 900, tile.src.width]} sizes={tile.span >= 4 ? "(max-width: 900px) 100vw, 740px" : "(max-width: 900px) 100vw, 560px"} />
+              </div>
+              <div class="tile-body">
+                <h3>{tile.title}</h3>
+                <p>{tile.body}</p>
+              </div>
+            </article>
           ))
         }
       </div>
-    </section>
 
-    <section class="wrap more">
-      <h2>{t.more.title}</h2>
-      <dl>
+      <h3 class="more-title">{t.modules.more.title}</h3>
+      <dl class="more">
         {
-          t.more.items.map(([term, desc]) => (
+          t.modules.more.items.map(([term, desc]) => (
             <div>
               <dt>{term}</dt>
               <dd>{desc}</dd>
@@ -102,119 +141,124 @@ const looks = [lookDynamic, lookClassic, lookMono, lookAurora];
       </dl>
     </section>
 
-    <section class="wrap privacy">
-      <h2>{t.privacy.title}</h2>
-      <p>{t.privacy.body}</p>
-      <a href={href(lang, "privacy")}>{t.privacy.link}</a>
+    <section class="wrap section looks" id="looks" aria-labelledby="looks-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t.looks.eyebrow}</p>
+          <h2 id="looks-title">{t.looks.title}</h2>
+        </div>
+        <p>{t.looks.body}</p>
+      </div>
+      <div class="card looks-card">
+        <fieldset class="segmented">
+          <legend class="visually-hidden">{t.looks.label}</legend>
+          {
+            t.looks.items.map((label, i) => (
+              <label>
+                <input type="radio" name="look" value={i} checked={i === 0} />
+                <span>{label}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+        <div class="looks-stage">
+          {looks.map((src, i) => <Image class="look" data-look={i} src={src} alt={t.looks.alts[i]} quality={90} widths={[600, src.width]} sizes="(max-width: 760px) 100vw, 600px" />)}
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap duo" aria-label={t.keys.title}>
+      <article class="card duo-card">
+        <p class="eyebrow">{t.keys.eyebrow}</p>
+        <h2>{t.keys.title}</h2>
+        <p>{t.keys.body}</p>
+        <ul class="keys">
+          {
+            t.keys.items.map(([combo, label]) => (
+              <li>
+                <span class="combo">
+                  {combo.map((k) => <kbd>{k}</kbd>)}
+                </span>
+                <span>{label}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </article>
+      <article class="card duo-card">
+        <p class="eyebrow">{t.api.eyebrow}</p>
+        <h2>{t.api.title}</h2>
+        <p>{t.api.body}</p>
+        <pre class="code"><code>{curl}</code></pre>
+        <a class="text-link" href={LINKS.api}>{t.api.link} <span aria-hidden="true">→</span></a>
+      </article>
+    </section>
+
+    <section class="wrap section" aria-labelledby="privacy-title">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">{t.privacy.eyebrow}</p>
+          <h2 id="privacy-title">{t.privacy.title}</h2>
+        </div>
+        <a class="button" href={href(lang, "privacy")}>{t.privacy.link}</a>
+      </div>
+      <ul class="pillars">
+        {
+          t.privacy.items.map(([title, body], i) => (
+            <li class="card">
+              <span class="pillar-icon" aria-hidden="true">
+                {i === 0 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.4 10.4 0 0 1 12 5c7 0 10 7 10 7a13.2 13.2 0 0 1-1.67 2.68M6.61 6.61A13.5 13.5 0 0 0 2 12s3 7 10 7a9.7 9.7 0 0 0 5.39-1.61M2 2l20 20" /></svg>
+                )}
+                {i === 1 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z" /></svg>
+                )}
+                {i === 2 && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                )}
+              </span>
+              <h3>{title}</h3>
+              <p>{body}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="wrap section faq" id="faq" aria-labelledby="faq-title">
+      <div class="faq-head">
+        <p class="eyebrow">{t.faq.eyebrow}</p>
+        <h2 id="faq-title">{t.faq.title}</h2>
+      </div>
+      <div class="faq-list">
+        {
+          t.faq.items.map(([q, a]) => (
+            <details name="faq">
+              <summary>
+                {q}
+                <svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M8 3v10M3 8h10" /></svg>
+              </summary>
+              <p>{a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="wrap">
+      <div class="card closing">
+        <h2>{t.cta.title}</h2>
+        <p>{t.cta.body}</p>
+        <div class="cta">
+          <a class="button primary" href={DOWNLOAD}>{t.cta.download}</a>
+          <a class="button" href={REPO}>{t.cta.github}</a>
+        </div>
+      </div>
     </section>
   </main>
-
-  <footer class="wrap footer">
-    <a href={DOWNLOAD}>{t.footer.version}: v{pkg.version}</a>
-    <a href={href(lang, "privacy")}>{t.footer.privacy}</a>
-    <a href={`${REPO}/issues`}>{t.footer.issues}</a>
-    <a href={href(t.otherLang.lang)} hreflang={t.otherLang.lang} lang={t.otherLang.lang}>{t.otherLang.label}</a>
-    <span>{t.footer.license}</span>
-  </footer>
 </Base>
 
 <style>
-  .hero {
-    padding-bottom: clamp(64px, 10vw, 120px);
-  }
-
-  .hero-copy {
-    display: grid;
-    justify-items: center;
-    text-align: center;
-    margin-top: clamp(24px, 5vw, 48px);
-  }
-
-  h1 {
-    max-width: 18ch;
-    margin: 0;
-    font-size: clamp(2.25rem, 6vw, 4.25rem);
-    line-height: 1.02;
-    font-weight: 700;
-    letter-spacing: -0.035em;
-    text-wrap: balance;
-  }
-
-  .lead {
-    max-width: 52ch;
-    margin: 24px 0 0;
-    font-size: clamp(1.0625rem, 2vw, 1.25rem);
-    color: var(--text-dim);
-    text-wrap: pretty;
-  }
-
-  .cta {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-    margin-top: 36px;
-  }
-
-  .store {
-    display: flex;
-    border-radius: 8px;
-  }
-
-  .store img {
-    display: block;
-    height: 48px;
-    width: auto;
-  }
-
-  .button {
-    padding: 13px 24px;
-    border-radius: 999px;
-    background: var(--card);
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.15s ease;
-  }
-
-  .button:hover {
-    background: rgba(255, 255, 255, 0.13);
-  }
-
-  .button.primary {
-    background: var(--text);
-    color: #000;
-  }
-
-  .button.primary:hover {
-    background: #fff;
-  }
-
-  .note {
-    margin: 18px 0 0;
-    font-size: 0.875rem;
-    color: var(--text-faint);
-  }
-
-  h2 {
-    margin: 0;
-    font-size: clamp(1.5rem, 3vw, 2rem);
-    line-height: 1.12;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-    text-wrap: balance;
-  }
-
-  .demo {
-    max-width: 880px;
-    margin-bottom: clamp(88px, 12vw, 144px);
-  }
-
-  .demo-gif {
-    display: block;
-    height: auto;
-  }
-
   .visually-hidden {
     position: absolute;
     width: 1px;
@@ -224,145 +268,624 @@ const looks = [lookDynamic, lookClassic, lookMono, lookAurora];
     white-space: nowrap;
   }
 
-  .features {
-    display: grid;
-    gap: clamp(72px, 10vw, 128px);
+  /* --- hero ------------------------------------------------------------------ */
+
+  .hero {
+    padding-bottom: clamp(56px, 8vw, 96px);
   }
 
-  .feature {
+  .hero-copy {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: clamp(32px, 5vw, 72px);
+    justify-items: center;
+    text-align: center;
+    margin-top: clamp(16px, 3vw, 32px);
+  }
+
+  .pill {
+    display: inline-flex;
     align-items: center;
-  }
-
-  .feature-copy p {
-    max-width: 40ch;
-    margin: 16px 0 0;
-    color: var(--text-dim);
-  }
-
-  .shot {
-    width: 100%;
-    border-radius: 16px;
-    outline: 1px solid var(--hairline);
-    outline-offset: -1px;
-  }
-
-  .looks {
-    margin-top: clamp(112px, 14vw, 176px);
-  }
-
-  .section-head p {
-    max-width: 56ch;
-    margin: 16px 0 0;
-    color: var(--text-dim);
-  }
-
-  .looks-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 32px 24px;
-    margin-top: 48px;
-  }
-
-  figure {
+    gap: 8px;
     margin: 0;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 0.8125rem;
+    font-weight: 500;
   }
 
-  figcaption {
-    margin-top: 12px;
-    font-size: 0.875rem;
+  .live {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+  }
+
+  h1 {
+    max-width: 16ch;
+    margin: 20px 0 0;
+    font-size: clamp(2.5rem, 7vw, 4.75rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
+  }
+
+  .lead {
+    max-width: 56ch;
+    margin: 22px 0 0;
+    color: var(--text-dim);
+    font-size: clamp(1.0625rem, 1.8vw, 1.1875rem);
+    text-wrap: pretty;
+  }
+
+  .cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 32px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 16px;
+    margin: 18px 0 0;
     color: var(--text-faint);
+    font-size: 0.8125rem;
   }
 
-  .more {
-    margin-top: clamp(112px, 14vw, 176px);
+  .hero-meta span + span::before {
+    content: "·";
+    margin-right: 16px;
   }
 
-  dl {
+  /* --- demo ------------------------------------------------------------------ */
+
+  .frame {
+    padding: 8px;
+  }
+
+  /* Recorded on this same gray, so the video's edges disappear into the panel. */
+  .demo-video {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+  }
+
+  /* --- stats (after devl's Stats Band) ---------------------------------------- */
+
+  .stats {
+    margin-top: clamp(56px, 8vw, 88px);
+  }
+
+  .stats dl {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 40px 48px;
-    margin: 40px 0 0;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    border-block: 1px solid var(--border);
   }
 
-  dl div {
-    padding-top: 18px;
-    border-top: 1px solid var(--hairline);
+  .stats div {
+    padding: 28px 24px;
   }
 
-  dt {
+  .stats div + div {
+    border-left: 1px solid var(--border);
+  }
+
+  .stats dt {
+    font-size: clamp(2.25rem, 4vw, 3rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stats dd {
+    margin: 10px 0 0;
+    color: var(--text-dim);
+    font-size: 0.875rem;
+    text-wrap: pretty;
+  }
+
+  /* --- bento (after devl's Feature Bento) ------------------------------------- */
+
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 16px;
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .tile:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.12);
+  }
+
+  .span-2 {
+    grid-column: span 2;
+  }
+
+  .span-3 {
+    grid-column: span 3;
+  }
+
+  .span-4 {
+    grid-column: span 4;
+  }
+
+  /* A little desktop: the island hangs from its top edge. */
+  .tile-art {
+    height: 200px;
+    margin: 8px 8px 0;
+    overflow: hidden;
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+  }
+
+  .span-3 .tile-art {
+    height: 250px;
+  }
+
+  .tall {
+    grid-row: span 2;
+  }
+
+  .tall .tile-art {
+    flex: 1;
+    height: auto;
+    min-height: 340px;
+  }
+
+  .tile-art :global(img) {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .tile:hover .tile-art :global(img) {
+    transform: translateY(4px);
+  }
+
+  .tile-body {
+    padding: 18px 20px 20px;
+  }
+
+  .tile h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .tile p {
+    margin: 4px 0 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    text-wrap: pretty;
+  }
+
+  .more-title {
+    margin: 56px 0 0;
+    font-size: 1rem;
     font-weight: 600;
   }
 
-  dd {
-    margin: 6px 0 0;
+  .more {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 32px;
+    margin: 8px 0 0;
+  }
+
+  .more div {
+    padding-block: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .more dt {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+
+  .more dd {
+    margin: 4px 0 0;
+    color: var(--text-dim);
+    font-size: 0.875rem;
+  }
+
+  /* --- looks ----------------------------------------------------------------- */
+
+  .looks-card {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 20px 8px 8px;
+  }
+
+  .segmented {
+    display: inline-flex;
+    gap: 2px;
+    margin: 0;
+    padding: 3px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+  }
+
+  .segmented label {
+    position: relative;
+  }
+
+  .segmented input {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  .segmented span {
+    display: block;
+    padding: 6px 14px;
+    border-radius: 7px;
+    color: var(--text-dim);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .segmented input:checked + span {
+    background: var(--surface);
+    color: var(--text);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.08),
+      0 0 0 1px var(--border);
+  }
+
+  .segmented input:focus-visible + span {
+    outline: 2px solid var(--ring);
+    outline-offset: 1px;
+  }
+
+  .looks-stage {
+    display: grid;
+    width: 100%;
+    min-height: 180px;
+    margin-top: 12px;
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+  }
+
+  /* All four share one cell; the picked one shows. */
+  .looks-stage :global(.look) {
+    grid-area: 1 / 1;
+    width: min(600px, 100%);
+    margin-inline: auto;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .looks:has(input[value="0"]:checked) :global([data-look="0"]),
+  .looks:has(input[value="1"]:checked) :global([data-look="1"]),
+  .looks:has(input[value="2"]:checked) :global([data-look="2"]),
+  .looks:has(input[value="3"]:checked) :global([data-look="3"]) {
+    opacity: 1;
+  }
+
+  /* --- keyboard + API ---------------------------------------------------------- */
+
+  .duo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .duo-card {
+    display: flex;
+    flex-direction: column;
+    /* Grid items don't shrink below their content: the command would push the page sideways. */
+    min-width: 0;
+    padding: 28px;
+  }
+
+  .duo-card h2 {
+    margin: 8px 0 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+
+  .duo-card > p:not(.eyebrow) {
+    margin: 8px 0 0;
+    color: var(--text-dim);
+    font-size: 0.9375rem;
+    text-wrap: pretty;
+  }
+
+  .keys {
+    display: grid;
+    gap: 12px;
+    margin: auto 0 0;
+    padding: 24px 0 0;
+    list-style: none;
+  }
+
+  .keys li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    font-size: 0.9375rem;
+  }
+
+  .combo {
+    display: flex;
+    gap: 4px;
+  }
+
+  .code {
+    margin: 24px 0 0;
+    padding: 16px 18px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--panel);
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+  }
+
+  .text-link {
+    margin-top: 16px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .text-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* --- privacy ----------------------------------------------------------------- */
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .pillars li {
+    padding: 24px;
+  }
+
+  .pillar-icon {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--panel);
+  }
+
+  .pillar-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .pillars h3 {
+    margin: 16px 0 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .pillars p {
+    margin: 4px 0 0;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    text-wrap: pretty;
+  }
+
+  /* --- FAQ (after devl's FAQ) ---------------------------------------------------- */
+
+  .faq {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .faq-head {
+    position: sticky;
+    top: 32px;
+  }
+
+  .faq-head h2 {
+    margin: 8px 0 0;
+    font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .faq-list {
+    border-top: 1px solid var(--border);
+    /* Lets `details` animate to its measured height (Chromium; elsewhere it just opens). */
+    interpolate-size: allow-keywords;
+  }
+
+  details {
+    border-bottom: 1px solid var(--border);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 0;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary svg {
+    flex: none;
+    width: 16px;
+    height: 16px;
+    color: var(--text-dim);
+    transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  details[open] summary svg {
+    transform: rotate(45deg);
+  }
+
+  details::details-content {
+    height: 0;
+    overflow: clip;
+    transition:
+      height 0.3s cubic-bezier(0.23, 1, 0.32, 1),
+      content-visibility 0.3s allow-discrete;
+  }
+
+  details[open]::details-content {
+    height: auto;
+  }
+
+  details p {
+    margin: 0;
+    padding-bottom: 20px;
+    max-width: 62ch;
     color: var(--text-dim);
     font-size: 0.9375rem;
   }
 
-  .privacy {
-    margin-top: clamp(112px, 14vw, 176px);
-    padding: clamp(32px, 5vw, 56px);
-    border-radius: 28px;
-    background: var(--island);
+  /* --- closing CTA ----------------------------------------------------------------- */
+
+  .closing {
+    display: grid;
+    justify-items: center;
+    padding: clamp(40px, 7vw, 72px) 24px;
+    text-align: center;
   }
 
-  .privacy p {
-    max-width: 58ch;
-    margin: 16px 0 24px;
-    color: var(--text-dim);
-  }
-
-  .privacy a {
-    color: var(--accent);
+  .closing h2 {
+    max-width: 18ch;
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
     font-weight: 600;
-    text-underline-offset: 4px;
+    line-height: 1.05;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
   }
 
-  .footer {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px 28px;
-    margin-top: 72px;
-    padding: 28px 0 48px;
-    border-top: 1px solid var(--hairline);
-    font-size: 0.875rem;
-    color: var(--text-faint);
-  }
-
-  .footer a {
+  .closing p {
+    max-width: 48ch;
+    margin: 14px 0 0;
     color: var(--text-dim);
-    text-decoration: none;
   }
 
-  .footer a:hover {
-    color: var(--text);
+  .closing .cta {
+    margin-top: 28px;
   }
 
-  .footer span {
-    margin-left: auto;
-  }
+  /* --- smaller screens ------------------------------------------------------------- */
 
-  @media (max-width: 860px) {
-    .feature {
-      grid-template-columns: minmax(0, 1fr);
+  @media (max-width: 900px) {
+    .bento {
+      grid-template-columns: repeat(2, 1fr);
     }
 
-    dl {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+    .span-2,
+    .span-3 {
+      grid-column: span 1;
+    }
+
+    .span-4 {
+      grid-column: span 2;
+    }
+
+    .tall {
+      grid-row: auto;
+    }
+
+    .stats dl,
+    .more {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .stats div:nth-child(3) {
+      border-left: 0;
+    }
+
+    .stats div:nth-child(n + 3) {
+      border-top: 1px solid var(--border);
+    }
+
+    .duo,
+    .faq {
+      grid-template-columns: 1fr;
+    }
+
+    .faq-head {
+      position: static;
+    }
+
+    .pillars {
+      grid-template-columns: 1fr;
     }
   }
 
-  @media (max-width: 560px) {
-    .looks-grid,
-    dl {
-      grid-template-columns: minmax(0, 1fr);
+  @media (max-width: 600px) {
+    .bento {
+      grid-template-columns: 1fr;
     }
 
-    .footer span {
-      margin-left: 0;
+    .span-4 {
+      grid-column: span 1;
+    }
+
+    .tall .tile-art {
+      height: 280px;
+    }
+
+    .more {
+      grid-template-columns: 1fr;
+    }
+
+    .stats div {
+      padding: 22px 16px;
+    }
+
+    .segmented span {
+      padding: 6px 10px;
     }
   }
 </style>

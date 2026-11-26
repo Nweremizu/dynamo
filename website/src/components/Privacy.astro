@@ -28,7 +28,7 @@ const { Content } = await render(entry);
   .policy {
     width: min(720px, 100% - 2 * var(--gutter));
     margin-inline: auto;
-    padding: 72px 0 96px;
+    padding: 112px 0 32px;
   }
 
   .back {
@@ -49,15 +49,19 @@ const { Content } = await render(entry);
   article :global(h1) {
     margin: 0 0 8px;
     font-size: clamp(2rem, 5vw, 2.75rem);
+    font-weight: 600;
     line-height: 1.08;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.035em;
     text-wrap: balance;
   }
 
   article :global(h2) {
     margin: 56px 0 0;
-    font-size: 1.5rem;
-    letter-spacing: -0.015em;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 1.375rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
 
   article :global(h3) {
@@ -81,15 +85,16 @@ const { Content } = await render(entry);
   }
 
   article :global(a) {
-    color: var(--accent);
+    color: var(--text);
     text-underline-offset: 3px;
   }
 
   article :global(code) {
     padding: 1px 6px;
     border-radius: 6px;
-    background: var(--card);
-    font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
     font-size: 0.85em;
     color: var(--text);
   }
@@ -106,7 +111,7 @@ const { Content } = await render(entry);
   article :global(th),
   article :global(td) {
     padding: 10px 14px 10px 0;
-    border-bottom: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--border);
     text-align: left;
     vertical-align: top;
     color: var(--text-dim);

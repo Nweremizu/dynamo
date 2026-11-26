@@ -13,7 +13,7 @@ const t = strings[Astro.props.lang].island;
 ---
 
 <div class="island-stage">
-  <div class="island" data-state="music" role="region" aria-label="Island for Windows">
+  <div class="island" data-state="music" role="region" aria-label={t.label}>
     <div class="layer compact" data-for="music">
       <span class="art" aria-hidden="true"></span>
       <span class="track">{t.track}</span>
@@ -225,18 +225,26 @@ const t = strings[Astro.props.lang].island;
     grid-template-rows: 1fr auto;
     justify-items: center;
     /* Room for the open request, so the page doesn't move when it opens. */
-    height: 260px;
+    height: 236px;
   }
 
   .island {
+    /* The island's own palette: light on black, whatever the page around it uses. */
+    --text: #f5f5f7;
+    --text-dim: rgba(245, 245, 247, 0.62);
+    --text-faint: rgba(245, 245, 247, 0.38);
+    --card: rgba(255, 255, 255, 0.08);
+    --claude: #d97757;
+    --waiting: #f5b83d;
     --w: 340px;
     --h: 40px;
+    color: var(--text);
     position: relative;
     width: min(var(--w), 100vw - 32px);
     height: var(--h);
     background: var(--island);
     border-radius: 0 0 22px 22px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 18px 36px -14px rgba(0, 0, 0, 0.55);
     overflow: hidden;
     transition:
       width 0.5s cubic-bezier(0.32, 1.25, 0.5, 1),
@@ -318,11 +326,11 @@ const t = strings[Astro.props.lang].island;
     width: 22px;
     height: 22px;
     border-radius: 6px;
-    background: linear-gradient(135deg, #ff7a45, #c13fd6 60%, #7a2bf0);
+    background: #1f63ff;
   }
 
   .art.next {
-    background: linear-gradient(45deg, #e8173c, #ffb02e);
+    background: #ffd60a;
   }
 
   .art.big {
@@ -423,7 +431,7 @@ const t = strings[Astro.props.lang].island;
     width: 21%;
     height: 100%;
     border-radius: inherit;
-    background: linear-gradient(90deg, #ffd2b8, #fff);
+    background: #fff;
   }
 
   .island[data-state="track"] .progress .bar i {
@@ -669,7 +677,7 @@ const t = strings[Astro.props.lang].island;
     display: none;
     margin: 0;
     font-size: 0.8125rem;
-    color: var(--text-faint);
+    color: var(--text-dim);
     text-align: center;
   }
 
@@ -688,28 +696,32 @@ const t = strings[Astro.props.lang].island;
     flex: none;
     width: 26px;
     height: 26px;
-    border: 0;
+    padding: 0;
+    border: 1px solid var(--border);
     border-radius: 50%;
-    background: var(--card);
+    background: var(--surface);
     cursor: pointer;
     transition: background 0.15s ease;
   }
 
   .toggle:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: var(--panel);
   }
 
   .toggle::after {
     content: "";
     display: block;
-    width: 10px;
+    width: 8px;
     height: 10px;
     margin: auto;
     /* Pause bars; a play triangle while paused. */
-    background: linear-gradient(90deg, var(--text-dim) 0 35%, transparent 35% 65%, var(--text-dim) 65%);
+    box-sizing: border-box;
+    border-inline: 3px solid var(--text-dim);
   }
 
   .is-paused .toggle::after {
+    width: 10px;
+    border: 0;
     background: var(--text-dim);
     clip-path: polygon(15% 0, 100% 50%, 15% 100%);
   }
