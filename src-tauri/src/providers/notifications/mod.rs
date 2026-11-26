@@ -134,6 +134,16 @@ impl Provider for NotificationsProvider {
                 }
             }
             "clear" => ctx.state.lock().unwrap().items.clear(),
+            // Put away without opening: one notification (an id) or an app's whole stack (ids).
+            "dismiss" => {
+                let ids = dismissed_ids(&payload);
+                ctx.state.lock().unwrap().items.retain(|i| !ids.contains(&i.id));
+                if let Some(a) = activities::handle() {
+                    for id in &ids {
+                        a.remove(&activity_id(*id));
+                    }
+                }
+            }
             // Register the sparse package, then relaunch to pick up the identity.
             "enable" => match package::register(ctx.hub.app()) {
                 Ok(()) => {
@@ -152,6 +162,14 @@ impl Provider for NotificationsProvider {
         }
         ctx.publish();
         Ok(Value::Null)
+    }
+}
+
+/// `dismiss`'s payload: one id, or a list of them.
+fn dismissed_ids(payload: &Value) -> Vec<u32> {
+    match payload {
+        Value::Array(ids) => ids.iter().filter_map(Value::as_u64).map(|id| id as u32).collect(),
+        id => id.as_u64().map(|id| vec![id as u32]).unwrap_or_default(),
     }
 }
 
@@ -405,4 +423,17 @@ fn read_image(reference: &RandomAccessStreamReference) -> Option<String> {
         "data:{mime};base64,{}",
         base64::engine::general_purpose::STANDARD.encode(&buf)
     ))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::dismissed_ids;
+    use serde_json::json;
+
+    #[test]
+    fn dismisses_one_or_a_stack() {
+        assert_eq!(dismissed_ids(&json!(7)), vec![7]);
+        assert_eq!(dismissed_ids(&json!([3, 4, 9])), vec![3, 4, 9]);
+        assert!(dismissed_ids(&json!(null)).is_empty());
+    }
 }

@@ -11,7 +11,7 @@ startBridge();
 startSettings();
 
 // Same bundle for every window; pick the UI by window label
-// (or `#settings` / `#pip` when previewing in a browser).
+// (or `#settings` / `#pip` / `#welcome` when previewing in a browser).
 const label = isTauri ? getCurrentWindow().label : location.hash.slice(1) || "island";
 
 // The PiP window never shows plugins.
@@ -30,6 +30,7 @@ const windows: Record<string, LoadUi> = {
 	island: async () => ({ default: (await import("./components/Island")).Island }),
 	settings: async () => ({ default: (await import("./settings/SettingsApp")).SettingsApp }),
 	pip: async () => ({ default: (await import("./pip/PipApp")).PipApp }),
+	welcome: async () => ({ default: (await import("./welcome/WelcomeApp")).WelcomeApp }),
 };
 
 const App = React.lazy(windows[label] ?? windows.island);

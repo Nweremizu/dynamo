@@ -8,7 +8,7 @@ A Dynamic Island for the top of your Windows desktop. It shows what's playing, w
 
 [**Download the latest release (free)**](https://github.com/Nweremizu/dynamo/releases/latest)
 
-<img src="docs/demo.gif" width="820" alt="Dynamo in use: Claude Code edits a file, a WhatsApp message arrives, the next song starts, Claude asks to run a command, the volume changes, then the music and notifications tabs" />
+<img src="docs/demo.gif" width="820" alt="Dynamo in use: Claude Code edits a file, a WhatsApp message slides in as a banner, the next song starts, Claude asks to run a command, the volume changes, then the music tab and the notifications stacked by app" />
 
 </div>
 
@@ -45,7 +45,7 @@ A Dynamic Island for the top of your Windows desktop. It shows what's playing, w
 Hover the island and it opens on whatever is busiest; the tab bar takes you to everything else.
 
 <p align="center">
-  <img src="docs/tabs.gif" width="820" alt="The island opening on the music player, then switching to AI Agents, Pomodoro, Clock & calendar and FitsWise, then closing" />
+  <img src="docs/tabs.gif" width="820" alt="The island opening on the music player, then switching to AI Agents, Notifications stacked by app, Pomodoro, Clock & calendar and FitsWise, then closing" />
 </p>
 
 At rest it shrinks to a pill that shows the most important thing going on, with small bubbles beside it for anything else that's live.
@@ -214,12 +214,18 @@ Your Beats Fit Pro without the phone app: the battery of each bud and the case, 
 
 ### 🔔 Notifications
 
-WhatsApp, Teams, Outlook, Discord and other apps' notifications, mirrored from Windows. Each new one pops open with the app's icon, and the tab keeps the recent ones (click one to open its app).
+WhatsApp, Teams, Outlook, Discord and other apps' notifications, mirrored from Windows.
+
+- Each new one slides in as a banner with the app's icon, the sender and the message, and a line running down until it goes away
+- The tab stacks them by app, like a phone's lock screen: the newest on top and the rest peeking out underneath, unfolded with one click
+- New ones keep a blue dot while you look; hover a card to dismiss it (or the whole app), click it to open the app
 
 Windows only lets registered apps read notifications, so **Settings → Modules → Notifications → Enable** registers Dynamo once as a sparse package and restarts it. This needs Windows Developer Mode, since the registration isn't signed.
 
 <p align="center">
-  <img src="docs/screenshots/notifications.png" width="620" alt="Notifications: a WhatsApp message and an Outlook reminder" />
+  <img src="docs/screenshots/notification-banner.png" width="620" alt="A WhatsApp message arriving as a banner: the app's icon, the sender, the message, an Open button and a line counting down" />
+  <br />
+  <img src="docs/screenshots/notifications.png" width="620" alt="Notifications stacked by app: WhatsApp and Discord with more messages underneath, then Teams and Outlook" />
 </p>
 
 ### 🕐 Clock & calendar

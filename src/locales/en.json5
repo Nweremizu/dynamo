@@ -133,6 +133,7 @@
   },
   window: {
     settings: "Dynamo — Settings",
+    welcome: "Welcome to Dynamo",
   },
 
   // Island chrome
@@ -656,6 +657,16 @@
     empty: "No notifications",
     // {app}: the app that sent it
     open: "Open {app}",
+    openShort: "Open",
+    // {n}: how many arrived since you last looked
+    new: "{n} new",
+    clearAll: "Clear all",
+    dismiss: "Dismiss",
+    // {n}: notifications from this app
+    showAll: "Show all {n}",
+    showLess: "Show less",
+    caughtUp: "You're all caught up",
+    caughtUpDesc: "New notifications from your apps show up here.",
     access: {
       title: "Windows notifications",
       noIdentity: "Windows only lets registered apps read notifications. Enabling registers the island once and restarts it.",
@@ -668,6 +679,86 @@
       openPrivacy: "Open settings",
       how: "Needs Windows Developer Mode (Settings → System → For developers), since the registration isn't signed.",
       openDeveloper: "Open developer settings",
+    },
+  },
+
+  // First-run welcome window (onboarding)
+  onboarding: {
+    title: "Welcome to Dynamo",
+    // {n}: this step; {total}: how many
+    step: "Step {n} of {total}",
+    skip: "Skip tour",
+    back: "Back",
+    next: "Continue",
+    close: "Close",
+    reopen: "Show the welcome tour",
+    meet: {
+      eyebrow: "Welcome",
+      title: "Meet your island",
+      desc: "Dynamo lives at the top of your screen and shows what's going on: music, your coding agents, messages, timers. The rest of the time it stays out of the way.",
+      try: "Move your mouse over the island at the top of your screen.",
+      done: "That's it. It opens when you hover it and closes when you leave.",
+    },
+    look: {
+      eyebrow: "Look",
+      title: "Pick a look",
+      desc: "Watch the top of your screen: the island changes as you pick. Colors and glass are in Settings → Appearance.",
+    },
+    modules: {
+      eyebrow: "Modules",
+      title: "Choose what it shows",
+      desc: "Turn on what you'll use. Busy modules come forward on their own, and you can change this anytime in Settings → Modules.",
+      // {n}: modules turned on
+      count: "{n} on",
+      music: "What's playing, with controls",
+      agents: "Claude Code and Codex, live",
+      notifications: "Your apps' notifications",
+      clock: "Time, calendar and meetings",
+      shelf: "Downloads and dropped files",
+      clipboard: "What you copied",
+      privacy: "Who's using the mic or camera",
+      pomodoro: "Focus sessions and breaks",
+      notes: "A scratchpad and to-dos",
+      monitor: "CPU, memory and network",
+      github: "Issues on your repositories",
+      fitswise: "Beats Fit Pro battery and modes",
+    },
+    connect: {
+      eyebrow: "Connect",
+      title: "Connect your tools",
+      desc: "All optional. Each can be turned on later in the settings too.",
+      claude: "Claude Code",
+      claudeDesc: "Live status of your sessions, and permission requests you can answer from the island.",
+      autostart: "Start with Windows",
+      autostartDesc: "So the island is there every time you sign in.",
+      notifications: "Windows notifications",
+      notificationsDesc: "WhatsApp, Teams, Outlook and more in the island. Needs Developer Mode, and Dynamo restarts once to finish.",
+      enable: "Enable",
+      on: "On",
+    },
+    keys: {
+      eyebrow: "Shortcuts",
+      title: "Two shortcuts worth knowing",
+      desc: "They work from any app. Try one now.",
+      ask: "Ask Claude anything",
+      find: "Find text anywhere on screen",
+      tried: "Works!",
+      note: "Change them, or give any module its own, in Settings → Keyboard shortcuts.",
+    },
+    done: {
+      eyebrow: "Done",
+      title: "You're all set",
+      desc: "Dynamo is running. It hides during fullscreen games and videos, and the tray icon has everything else.",
+      opened: "Opened the island",
+      // {name}: the look picked
+      look: "Look: {name}",
+      // {n}: modules turned on
+      modules: "{n} modules on",
+      claude: "Claude Code connected",
+      autostart: "Starts with Windows",
+      shortcut: "Tried a shortcut",
+      start: "Start using Dynamo",
+      settings: "Open settings",
     },
   },
 

@@ -26,7 +26,7 @@ import { PageHeader } from "../components/Heading";
 import { Toggle, ToggleRow } from "../components/Toggle";
 import { PAGES } from "../nav";
 
-const STYLES: {
+export const STYLES: {
 	id: IslandStyle;
 	name: "appearance.style.dynamic" | "appearance.style.windows";
 	desc: "appearance.style.dynamicDesc" | "appearance.style.windowsDesc";
@@ -193,7 +193,7 @@ export function AppearancePage({ values }: { values: Record<string, unknown> }) 
 }
 
 /** A miniature of each look. */
-function StylePreview({ style, rim }: { style: IslandStyle; rim: string[] }) {
+export function StylePreview({ style, rim }: { style: IslandStyle; rim: string[] }) {
 	const background = rimBackground(rim);
 	return (
 		<div className="relative h-18.5 overflow-hidden rounded-lg bg-[radial-gradient(120%_120%_at_80%_100%,#3b3a6b_0%,#16162a_60%,#0d0d17_100%)]">

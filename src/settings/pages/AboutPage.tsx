@@ -94,6 +94,11 @@ export function AboutPage() {
 					</Button>
 				</Row>
 				<Row label={t("settings.about.license")} desc="GNU GPL v3.0" />
+				<Row label={t("onboarding.title")}>
+					<Button onClick={() => command("open_welcome")} disabled={!isTauri}>
+						{t("onboarding.reopen")}
+					</Button>
+				</Row>
 			</Section>
 		</>
 	);

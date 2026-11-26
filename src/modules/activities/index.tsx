@@ -14,6 +14,7 @@ import { useProvider } from "../../core/bridge";
 import { useT } from "../../core/i18n";
 import { moduleEnabled, readSetting, useSettings } from "../../core/settings";
 import type { IslandModule, ModuleView } from "../../core/types";
+import { NotificationBanner } from "../notifications/components/NotificationBanner";
 import { ActivityCard } from "./components/ActivityCard";
 import { ActivityCompactLeft, ActivityCompactRight } from "./components/ActivityCompact";
 import { ApiSettings } from "./components/ApiSettings";
@@ -72,7 +73,11 @@ export const activitiesModule: IslandModule = {
 			},
 			expanded: alert ? (
 				<div className="flex h-full flex-col gap-1 overflow-y-auto [scrollbar-width:none]">
-					<ActivityCard activity={alert} />
+					{alert.source === "notification" ? (
+						<NotificationBanner activity={alert} />
+					) : (
+						<ActivityCard activity={alert} />
+					)}
 				</div>
 			) : (
 				<div className="flex h-full flex-col gap-1 overflow-y-auto [scrollbar-width:none]" data-scroll>
@@ -83,7 +88,10 @@ export const activitiesModule: IslandModule = {
 				</div>
 			),
 			expandedSize: alert
-				? { width: 560, height: alert.progress != null || alert.subtitle ? 128 : 104 }
+				? {
+						width: 560,
+						height: alert.source === "notification" ? 138 : alert.progress != null || alert.subtitle ? 128 : 104,
+					}
 				: { width: 560, height: 40 + Math.min(Math.max(ongoing.length, 1), MAX_ROWS) * ROW },
 			// Alerts that ask for it (notifications, low battery, "Claude answered") open the island.
 			activityKey: alert?.expand ? `${alert.id}:${alert.updatedAt}` : undefined,

@@ -114,6 +114,25 @@
 }
 
 /* A bar that only says "moving" (a download of unknown size). */
+/* The welcome tour's pointer, drifting up to the island and back. */
+@keyframes onboarding-cursor {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	45%,
+	60% {
+		translate: -62px -34px;
+	}
+}
+
+/* A notification banner's time left: shrinks from full to nothing. */
+@keyframes banner-countdown {
+	to {
+		transform: scaleX(0);
+	}
+}
+
 @keyframes shelf-progress {
 	from {
 		translate: -100%;

@@ -4,18 +4,20 @@ import { BellIcon } from "lucide-react";
  * island. New ones arrive as alerts (through the activities module); this
  * module keeps the recent history. Backend: `src-tauri/src/providers/notifications/`.
  */
-import { Badge } from "../../components/Glyph";
 import { Marquee } from "../../components/Marquee";
 import { useProvider } from "../../core/bridge";
 import type { IslandModule, ModuleView } from "../../core/types";
 import { useNow } from "../ai-agents/common/format";
+import { AppIcon } from "./components/AppIcon";
 import { NotificationsPanel } from "./components/NotificationsPanel";
 import { NotificationsSettings } from "./components/NotificationsSettings";
+import { stacksOf } from "./stacks";
 import { NOTIFICATION_BLUE, NOTIFICATIONS_PROVIDER, type NotificationsState } from "./types";
 
 /** Unread notifications this recent keep a spot in the compact island. */
 const UNREAD_WINDOW_MS = 5 * 60_000;
-const ROW = 52;
+/** One app's stack: the card and its peeking sheets, with the gap under it. */
+const STACK = 104;
 
 export const notificationsModule: IslandModule = {
 	id: "notifications",
@@ -40,18 +42,23 @@ export const notificationsModule: IslandModule = {
 			compact: latest && {
 				left: (
 					<>
-						<Badge icon="bell" image={latest.logo} color={NOTIFICATION_BLUE} size={24} radius={7} glyphSize={12} />
+						<AppIcon app={latest.app} logo={latest.logo} size={24} />
 						<Marquee text={latest.title} className="max-w-55 text-[13px] font-semibold" />
 					</>
 				),
 				right:
 					unread.length > 1 ? (
-						<span className="text-[12px] font-[650] text-brand-light">+{unread.length - 1}</span>
+						<span
+							className="grid h-5 min-w-5 place-items-center rounded-full px-1.5 text-[11px] font-bold text-white tabular-nums"
+							style={{ background: NOTIFICATION_BLUE }}
+						>
+							{unread.length}
+						</span>
 					) : null,
 				width: 340,
 			},
 			expanded: <NotificationsPanel state={state} />,
-			expandedSize: { width: 560, height: 66 + Math.min(Math.max(items.length, 1), 4) * ROW },
+			expandedSize: { width: 560, height: 80 + Math.min(Math.max(stacksOf(items).length, 1), 3) * STACK },
 		};
 	},
 };

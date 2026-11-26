@@ -99,6 +99,7 @@ pub fn run() {
 
             tray::setup(&handle)?;
             tray::enable_autostart_on_first_run(&handle);
+            settings::welcome_on_first_run(&handle);
             updater::spawn(handle.clone());
             Ok(())
         })
@@ -117,6 +118,7 @@ pub fn run() {
             settings::get_settings,
             settings::set_setting,
             settings::open_settings,
+            settings::open_welcome,
             settings::get_autostart,
             settings::set_autostart,
             settings::open_repo,

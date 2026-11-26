@@ -85,10 +85,35 @@ pub fn open_settings(app: AppHandle) -> Result<(), String> {
     open(&app).map_err(|e| e.to_string())
 }
 
-const SIZE: (f64, f64) = (860.0, 620.0);
-
 pub fn open(app: &AppHandle) -> tauri::Result<()> {
-    if let Some(win) = app.get_webview_window(SETTINGS_LABEL) {
+    show(app, SETTINGS_LABEL)
+}
+
+pub const WELCOME_LABEL: &str = "welcome";
+/// Set once the welcome tour is finished, skipped or closed.
+const ONBOARDING_DONE: &str = "onboarding.done";
+
+/// The welcome tour, again (About page).
+#[tauri::command]
+pub fn open_welcome(app: AppHandle) -> Result<(), String> {
+    show(&app, WELCOME_LABEL).map_err(|e| e.to_string())
+}
+
+/// First run: the welcome tour, until it's been finished or put away.
+pub fn welcome_on_first_run(app: &AppHandle) {
+    let done = app
+        .state::<Settings>()
+        .get(ONBOARDING_DONE)
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false);
+    if !done {
+        let _ = show(app, WELCOME_LABEL);
+    }
+}
+
+/// Focus the window if it's open, or build it.
+fn show(app: &AppHandle, label: &'static str) -> tauri::Result<()> {
+    if let Some(win) = app.get_webview_window(label) {
         win.unminimize()?;
         win.show()?;
         return win.set_focus();
@@ -98,22 +123,27 @@ pub fn open(app: &AppHandle) -> tauri::Result<()> {
     // event loop). Build from another thread instead.
     let app = app.clone();
     std::thread::spawn(move || {
-        if let Err(e) = create(&app) {
-            eprintln!("settings window: {e}");
+        if let Err(e) = create(&app, label) {
+            eprintln!("{label} window: {e}");
         }
     });
     Ok(())
 }
 
-fn create(app: &AppHandle) -> tauri::Result<()> {
-    let win = WebviewWindowBuilder::new(app, SETTINGS_LABEL, WebviewUrl::App("index.html".into()))
-        .title(crate::i18n::t(app, "window.settings"))
-        .inner_size(SIZE.0, SIZE.1)
+fn create(app: &AppHandle, label: &str) -> tauri::Result<()> {
+    let (title, (width, height)) = if label == WELCOME_LABEL {
+        ("window.welcome", (760.0, 560.0))
+    } else {
+        ("window.settings", (860.0, 620.0))
+    };
+    let win = WebviewWindowBuilder::new(app, label, WebviewUrl::App("index.html".into()))
+        .title(crate::i18n::t(app, title))
+        .inner_size(width, height)
         .resizable(false)
         .center()
-        // Custom titlebar lives in the webview (see `SettingsApp.tsx`).
+        // Custom titlebar lives in the webview (see `SettingsApp.tsx`, `WelcomeApp.tsx`).
         .decorations(false)
-        .background_color(tauri::webview::Color(12, 12, 16, 255))
+        .background_color(tauri::webview::Color(28, 28, 30, 255))
         .additional_browser_args(crate::memory::BROWSER_ARGS)
         .build()?;
     crate::memory::trim_when_minimized(&win);

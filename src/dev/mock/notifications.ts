@@ -18,9 +18,22 @@ const now = Date.now();
 const state = provider("notifications", {
 	access: "allowed" as string,
 	error: null,
+	// A few apps with several each, so the panel shows its stacks.
 	items: [
-		message(1, "WhatsApp", "Ana", "Are we still on for tonight?", now - 60_000),
-		message(2, "Outlook", "Weekly sync", "Moved to 3 PM", now - 1_800_000),
+		message(1, "WhatsApp", "Ana", "Are we still on for tonight?", now - 60_000, false),
+		message(
+			7,
+			"Discord",
+			"#releases",
+			"v0.6 is out: notes, a mic & camera dot and a new shelf 🎉",
+			now - 4 * 60_000,
+			false,
+		),
+		message(3, "WhatsApp", "Family", "Mom: Dinner at 8, don't be late!", now - 12 * 60_000, false),
+		message(4, "WhatsApp", "Ana", "I'll book the table", now - 25 * 60_000),
+		message(6, "Teams", "Rafael Souza", "Can you take a look at the PR before standup?", now - 40 * 60_000),
+		message(8, "Discord", "Leo", "gg, rematch tomorrow?", now - 55 * 60_000),
+		message(2, "Outlook", "Weekly sync", "Moved to 3 PM", now - 1_800_000 * 3),
 	],
 });
 
@@ -29,7 +42,7 @@ const samples = [
 	["Discord", "#general", "New release is out 🎉"],
 	["Outlook", "Weekly sync", "Moved to 3 PM"],
 ] as const;
-let nextId = 3;
+let nextId = 100;
 
 /** A new toast: the backend adds it to the list and shows it as an activity. */
 export function notify(app: string, title: string, body: string) {
@@ -40,6 +53,7 @@ export function notify(app: string, title: string, body: string) {
 			title,
 			subtitle: body,
 			caption: app,
+			action: `app:${app}`,
 			icon: "bell",
 			color: "#0A84FF",
 			priority: 60,
@@ -74,6 +88,11 @@ export const notifications = defineMock({
 		notifications: {
 			markRead: () => state.set((s) => ({ ...s, items: s.items.map((n) => ({ ...n, read: true })) })),
 			clear: () => state.set((s) => ({ ...s, items: [] })),
+			dismiss: (ids) => {
+				const gone = new Set([ids].flat() as number[]);
+				state.set((s) => ({ ...s, items: s.items.filter((n) => !gone.has(n.id)) }));
+			},
+			open: (id) => state.set((s) => ({ ...s, items: s.items.filter((n) => n.id !== id) })),
 			enable: () => state.set((s) => ({ ...s, access: "allowed" })),
 		},
 	},

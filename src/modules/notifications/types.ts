@@ -19,4 +19,4 @@ export interface NotificationsState {
 }
 
 export const NOTIFICATIONS_PROVIDER = "notifications";
-export const NOTIFICATION_BLUE = "#6866F9";
+export const NOTIFICATION_BLUE = "#0A84FF";

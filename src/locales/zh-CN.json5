@@ -121,7 +121,8 @@
     hiddenTooltip: "Windows 灵动岛（已隐藏）：点击以显示",
   },
   window: {
-    settings: "Windows 灵动岛 — 设置",
+    settings: "Dynamo — 设置",
+    welcome: "欢迎使用 Dynamo",
   },
 
   // 灵动岛主界面
@@ -642,6 +643,16 @@
     empty: "暂无通知",
     // {app}: 发送通知的应用
     open: "打开 {app}",
+    openShort: "打开",
+    // {n}: 上次查看后新到的数量
+    new: "{n} 条新通知",
+    clearAll: "全部清除",
+    dismiss: "移除",
+    // {n}: 这个应用的通知数
+    showAll: "显示全部 {n} 条",
+    showLess: "收起",
+    caughtUp: "没有新通知了",
+    caughtUpDesc: "应用的新通知会显示在这里。",
     access: {
       title: "Windows 系统通知",
       noIdentity: "Windows 仅允许已注册应用读取通知。启用此项将注册灵动岛一次并重启应用。",
@@ -658,6 +669,81 @@
   },
 
   // 全局快捷键（对应所唤出模块的设置页面）
+  onboarding: {
+    title: "欢迎使用 Dynamo",
+    step: "第 {n} 步，共 {total} 步",
+    skip: "跳过引导",
+    back: "上一步",
+    next: "继续",
+    close: "关闭",
+    reopen: "再看一遍欢迎引导",
+    meet: {
+      eyebrow: "欢迎",
+      title: "认识你的灵动岛",
+      desc: "Dynamo 待在屏幕顶部，显示正在发生的事：音乐、编程助手、消息和计时器。其余时间它不会打扰你。",
+      try: "把鼠标移到屏幕顶部的灵动岛上。",
+      done: "就是这样。鼠标移上去它就展开，移开就收起。",
+    },
+    look: {
+      eyebrow: "外观",
+      title: "选一个外观",
+      desc: "看看屏幕顶部：灵动岛会随你的选择变化。颜色和玻璃效果在“设置 → 外观”里。",
+    },
+    modules: {
+      eyebrow: "模块",
+      title: "选择要显示的内容",
+      desc: "打开你会用到的模块。有动静的模块会自己跳到前面，你也可以随时在“设置 → 模块”里修改。",
+      count: "已开启 {n} 个",
+      music: "正在播放的音乐和控制",
+      agents: "实时查看 Claude Code 和 Codex",
+      notifications: "应用的通知",
+      clock: "时间、日历和会议",
+      shelf: "下载和拖进来的文件",
+      clipboard: "你复制过的内容",
+      privacy: "谁在使用麦克风或摄像头",
+      pomodoro: "专注和休息",
+      notes: "草稿和待办",
+      monitor: "CPU、内存和网络",
+      github: "仓库里的 issue",
+      fitswise: "Beats Fit Pro 的电量和模式",
+    },
+    connect: {
+      eyebrow: "连接",
+      title: "连接你的工具",
+      desc: "都是可选的，之后也能在设置里打开。",
+      claude: "Claude Code",
+      claudeDesc: "实时显示会话状态，还能直接在灵动岛里回复权限请求。",
+      autostart: "开机启动",
+      autostartDesc: "每次登录时灵动岛都在。",
+      notifications: "Windows 通知",
+      notificationsDesc: "在灵动岛里显示微信、Teams、Outlook 等通知。需要开启开发者模式，Dynamo 会重启一次来完成设置。",
+      enable: "开启",
+      on: "已开启",
+    },
+    keys: {
+      eyebrow: "快捷键",
+      title: "两个值得记住的快捷键",
+      desc: "在任何应用里都能用。现在试试吧。",
+      ask: "向 Claude 提问",
+      find: "在屏幕上查找文字",
+      tried: "成功了！",
+      note: "可以在“设置 → 键盘快捷键”里修改它们，或给任何模块设置快捷键。",
+    },
+    done: {
+      eyebrow: "完成",
+      title: "一切就绪",
+      desc: "Dynamo 已经在运行。全屏游戏和视频时它会自动隐藏，托盘图标里有其他所有选项。",
+      opened: "打开过灵动岛",
+      look: "外观：{name}",
+      modules: "已开启 {n} 个模块",
+      claude: "已连接 Claude Code",
+      autostart: "开机启动",
+      shortcut: "试过快捷键",
+      start: "开始使用 Dynamo",
+      settings: "打开设置",
+    },
+  },
+
   shortcuts: {
     title: "快捷键",
     label: "全局快捷键",

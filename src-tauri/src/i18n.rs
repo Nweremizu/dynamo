@@ -59,4 +59,7 @@ pub fn set_locale(app: AppHandle, locale: State<Locale>, code: String) {
     if let Some(win) = app.get_webview_window(crate::settings::SETTINGS_LABEL) {
         let _ = win.set_title(&t(&app, "window.settings"));
     }
+    if let Some(win) = app.get_webview_window(crate::settings::WELCOME_LABEL) {
+        let _ = win.set_title(&t(&app, "window.welcome"));
+    }
 }
