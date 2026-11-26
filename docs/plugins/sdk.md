@@ -132,7 +132,7 @@ island.onLocaleChange((locale) => rerender());
 ## Network: `network:<host>`
 
 ```js
-const res = await island.net.fetch("https://api.github.com/repos/HeyyCzer/windows-island", {
+const res = await island.net.fetch("https://api.github.com/repos/Nweremizu/dynamo", {
   headers: { Accept: "application/vnd.github+json" },
 });
 if (res.ok) console.log((await res.json()).stargazers_count);

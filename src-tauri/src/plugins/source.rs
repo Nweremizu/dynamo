@@ -219,11 +219,11 @@ mod tests {
 
     #[test]
     fn parses_github_shorthands() {
-        let s = Source::parse("HeyyCzer/island-windows-plugins").unwrap();
-        assert_eq!(s.id, "github:HeyyCzer/island-windows-plugins");
+        let s = Source::parse("Nweremizu/dynamo-plugins").unwrap();
+        assert_eq!(s.id, "github:Nweremizu/dynamo-plugins");
         assert_eq!(
             s.index_url,
-            "https://raw.githubusercontent.com/HeyyCzer/island-windows-plugins/HEAD/island-plugins.json"
+            "https://raw.githubusercontent.com/Nweremizu/dynamo-plugins/HEAD/island-plugins.json"
         );
         let s = Source::parse(" owner/repo@v1.2 ").unwrap();
         assert_eq!(s.id, "github:owner/repo@v1.2");

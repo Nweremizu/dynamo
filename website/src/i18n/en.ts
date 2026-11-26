@@ -13,7 +13,7 @@ const en = {
     waiting: "Waiting for you",
     request: "Claude Code wants to run",
     command: "bun run build",
-    project: "windows-island",
+    project: "dynamo",
     allow: "Allow",
     always: "Always allow",
     deny: "Deny",

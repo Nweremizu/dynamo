@@ -154,7 +154,7 @@ function InstalledRow({ plugin, enabled }: { plugin: PluginInfo; enabled: boolea
 }
 
 /** Load a plugin from a folder while writing it. */
-const DOCS_URL = "https://github.com/HeyyCzer/windows-island/tree/main/docs/plugins";
+const DOCS_URL = "https://github.com/Nweremizu/dynamo/tree/main/docs/plugins";
 const openDocs = () => (isTauri ? command("open_external", { url: DOCS_URL }) : window.open(DOCS_URL, "_blank"));
 
 function DeveloperMode() {

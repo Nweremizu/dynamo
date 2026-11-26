@@ -47,7 +47,7 @@ fn agent() -> ureq::Agent {
 pub fn fetch(url: &str, key: &str, from: u64, to: u64) -> Result<Feed, Error> {
     let mut res = agent()
         .get(url)
-        .header("User-Agent", "windows-island")
+        .header("User-Agent", "dynamo")
         .call()
         .map_err(|_| Error::Network)?;
     match res.status().as_u16() {

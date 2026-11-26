@@ -13,7 +13,7 @@ Only the latest release gets security fixes. The app updates itself, so a fix re
 
 **Please don't open a public issue or pull request for a security problem.** Until a fixed release is out, a public report shows everyone how to attack people running the app.
 
-Report it privately through GitHub instead: **[Report a vulnerability](https://github.com/HeyyCzer/windows-dynamic-island/security/advisories/new)** (Security tab → Report a vulnerability). Only the maintainer sees the report.
+Report it privately through GitHub instead: **[Report a vulnerability](https://github.com/Nweremizu/dynamo/security/advisories/new)** (Security tab → Report a vulnerability). Only the maintainer sees the report.
 
 Please include:
 

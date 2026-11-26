@@ -13,7 +13,7 @@ const ptBr: Strings = {
     waiting: "Esperando você",
     request: "O Claude Code quer executar",
     command: "bun run build",
-    project: "windows-island",
+    project: "dynamo",
     allow: "Permitir",
     always: "Sempre permitir",
     deny: "Negar",

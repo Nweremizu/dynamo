@@ -6,7 +6,7 @@
 
 An iPhone/macOS-style Dynamic Island for the top of your Windows desktop. It shows what's playing, what your AI coding agents are doing, your notifications and more, and stays out of the way the rest of the time.
 
-[**Download the latest release (free)**](https://github.com/HeyyCzer/windows-dynamic-island/releases/latest)
+[**Download the latest release (free)**](https://github.com/Nweremizu/dynamo/releases/latest)
 
 <a href="https://get.microsoft.com/installer/download/9nxff6h0lpdl?referrer=appbadge" target="_self">
 	<img src="https://get.microsoft.com/images/en-us%20light.svg" width="200" alt="Get it from Microsoft" />
@@ -149,7 +149,7 @@ Not into the colorful look? You don't have to use it. **Settings → Appearance*
 
 ## Install
 
-1. Grab `Dynamic.Island_<version>_x64-setup.exe` from the [latest release](https://github.com/HeyyCzer/windows-dynamic-island/releases/latest).
+1. Grab `Dynamic.Island_<version>_x64-setup.exe` from the [latest release](https://github.com/Nweremizu/dynamo/releases/latest).
 2. Run it — it installs for your user only, no admin prompt.
 
 Or get it from the [Microsoft Store](https://get.microsoft.com/installer/download/9nxff6h0lpdl?referrer=appbadge) (paid, to support the project; updates come through the Store).

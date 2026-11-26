@@ -1,8 +1,8 @@
 <#
   Builds the Microsoft Store edition and packs it as an MSIX.
 
-    bun run package:store -- -IdentityName 12345HeyyCzer.IslandforWindows `
-      -Publisher "CN=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" -PublisherDisplayName HeyyCzer
+    bun run package:store -- -IdentityName 12345Nweremizu.Dynamo `
+      -Publisher "CN=XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" -PublisherDisplayName Nweremizu
 
   The three values are in Partner Center, under Product identity of the
   reserved app. The package is left unsigned: the Store signs it on upload.

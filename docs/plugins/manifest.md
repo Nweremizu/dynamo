@@ -4,7 +4,7 @@ The manifest sits at the root of a plugin package. The app validates it when ins
 
 Every user-visible text field (`name`, titles, labels, units) is a **key into your locales**, not the text itself. See [Translations](#translations).
 
-Add `"$schema": "https://raw.githubusercontent.com/HeyyCzer/windows-island/main/packages/plugin-sdk/plugin.schema.json"` for autocompletion in your editor.
+Add `"$schema": "https://raw.githubusercontent.com/Nweremizu/dynamo/main/packages/plugin-sdk/plugin.schema.json"` for autocompletion in your editor.
 
 ```jsonc
 {

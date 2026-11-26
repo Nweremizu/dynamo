@@ -1,8 +1,8 @@
-# Privacy Policy — Island for Windows
+# Privacy Policy — Dynamo
 
 *Last updated: October 26, 2026*
 
-Island for Windows ("the app") is a free, open-source desktop app published at [github.com/HeyyCzer/windows-island](https://github.com/HeyyCzer/windows-island). This policy explains what data the app touches, where it goes and how to remove it.
+Dynamo ("the app") is a free, open-source desktop app published at [github.com/Nweremizu/dynamo](https://github.com/Nweremizu/dynamo). This policy explains what data the app touches, where it goes and how to remove it.
 
 ## The short version
 
@@ -15,10 +15,10 @@ Island for Windows ("the app") is a free, open-source desktop app published at [
 
 | Data | Where | Why |
 | --- | --- | --- |
-| Settings | `%APPDATA%\com.heyyczer.dynamicisland\settings.json` | Remember your preferences |
+| Settings | `%APPDATA%\app.dynamo.desktop\settings.json` | Remember your preferences |
 | Tokens and private links (Google Calendar and Spotify refresh tokens, GitHub token, private calendar feed URLs) | Windows Credential Manager | Keep secrets out of plain-text files |
-| Shelf items (paths to files you dropped, not the files) | `%APPDATA%\com.heyyczer.dynamicisland\shelf.json` | Keep the shelf between restarts |
-| Screenshots and attachments for Ask Claude, clipboard pictures | `%APPDATA%\com.heyyczer.dynamicisland\` and, when you choose to keep a picture, *Pictures\Screenshots* | Attach them to a question or let you drag them out |
+| Shelf items (paths to files you dropped, not the files) | `%APPDATA%\app.dynamo.desktop\shelf.json` | Keep the shelf between restarts |
+| Screenshots and attachments for Ask Claude, clipboard pictures | `%APPDATA%\app.dynamo.desktop\` and, when you choose to keep a picture, *Pictures\Screenshots* | Attach them to a question or let you drag them out |
 | Calendar events, clipboard text, mirrored notifications, now-playing info, system stats, the text read off the screen by Find on screen | Memory only | Show them in the island; gone when the app closes |
 
 The app reads, without uploading anywhere, information Windows and other apps already keep on your computer: media playback info, Windows notifications (only after you enable the Notifications module), the clipboard (anything copied by password managers is ignored), battery, volume, Bluetooth devices, performance counters, and Claude Code's local transcripts and settings in `~/.claude`.
@@ -35,7 +35,7 @@ Because the app has no server, none of your data ever reaches us, so there is no
 - **Local only.** The app's built-in servers (the local API, the Claude Code bridge and the sign-in redirect) listen on `127.0.0.1` only and cannot be reached from your network or the internet.
 - **Sensitive clipboard content skipped.** Anything password managers mark as private is never read, and clipboard pictures saved for dragging are deleted every time the app starts.
 - **Revocation.** **Disconnect** revokes the Google token with Google and deletes it from your computer.
-- **Open source.** All of the app's code is public at [github.com/HeyyCzer/windows-island](https://github.com/HeyyCzer/windows-island), so anyone can check how data is handled. Security problems can be reported through the repository's issues.
+- **Open source.** All of the app's code is public at [github.com/Nweremizu/dynamo](https://github.com/Nweremizu/dynamo), so anyone can check how data is handled. Security problems can be reported through the repository's issues.
 
 ## Online services
 
@@ -96,7 +96,7 @@ When the app talks to Google, Spotify, GitHub, Anthropic or YouTube, those compa
 ## Deleting your data
 
 - Disconnect Google Calendar or Spotify, or remove GitHub tokens and feeds, in **Settings**.
-- Uninstall the app and delete `%APPDATA%\com.heyyczer.dynamicisland`.
+- Uninstall the app and delete `%APPDATA%\app.dynamo.desktop`.
 - Disabling the Claude Code integration in **Settings** restores your previous `~/.claude/settings.json`.
 
 ## Children
@@ -109,4 +109,4 @@ Changes to this policy are published in this file, with the date at the top upda
 
 ## Contact
 
-Questions or requests: open an issue at [github.com/HeyyCzer/windows-island/issues](https://github.com/HeyyCzer/windows-island/issues).
+Questions or requests: open an issue at [github.com/Nweremizu/dynamo/issues](https://github.com/Nweremizu/dynamo/issues).

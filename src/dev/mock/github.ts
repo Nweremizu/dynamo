@@ -1,6 +1,6 @@
 import { defineMock, provider } from "./kit";
 
-const REPO = "HeyyCzer/windows-island";
+const REPO = "Nweremizu/dynamo";
 const HOUR = 3_600_000;
 
 type Entry = { id: string; title: string; url: string; author: string | null; at: string };

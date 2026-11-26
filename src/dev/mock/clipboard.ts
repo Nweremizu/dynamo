@@ -22,7 +22,7 @@ const now = Date.now();
 const state = provider("clipboard", {
 	items: [
 		item({
-			preview: "https://github.com/HeyyCzer/windows-island/issues/128",
+			preview: "https://github.com/Nweremizu/dynamo/issues/128",
 			chars: 61,
 			source: "Google Chrome",
 			copiedAt: now - 900_000,

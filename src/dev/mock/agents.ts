@@ -77,8 +77,8 @@ const sec = (s: number) => Math.floor((now + s * 1000) / 1000);
 export const claudeSessions: Session[] = [
 	{
 		id: "a",
-		project: "windows-island",
-		cwd: "~/projects/windows-island",
+		project: "dynamo",
+		cwd: "~/projects/dynamo",
 		status: "working",
 		activity: { kind: "edit", arg: "Island.tsx" },
 		tool: "Edit",

@@ -100,7 +100,7 @@ fn get(path: &str, query: &[(&str, &str)], token: Option<&str>) -> Result<Page, 
         .get(format!("{API}{path}"))
         .header("Accept", "application/vnd.github+json")
         .header("X-GitHub-Api-Version", "2022-11-28")
-        .header("User-Agent", "windows-island");
+        .header("User-Agent", "dynamo");
     for (k, v) in query {
         req = req.query(*k, *v);
     }

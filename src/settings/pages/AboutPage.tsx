@@ -7,7 +7,7 @@ import { command, isTauri } from "../../core/bridge";
 import { useT } from "../../core/i18n";
 import { useToolbarTitle } from "../components/toolbar";
 
-const REPO_URL = "https://github.com/HeyyCzer/windows-island";
+const REPO_URL = "https://github.com/Nweremizu/dynamo";
 
 type UpdateStatus =
 	| { state: "idle" | "checking" | "latest" | "dev" | "portable" | "store" | "error" }
