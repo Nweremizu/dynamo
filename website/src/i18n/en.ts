@@ -1,13 +1,18 @@
-import type { Lang } from ".";
-
 const en = {
   htmlLang: "en",
-  otherLang: { lang: "pt-br" as Lang, label: "Português" },
   meta: {
-    title: "Dynamo · A Dynamic Island for Windows",
+    // Search titles: under ~60 characters, the main query first.
+    title: "Dynamo: A Free Dynamic Island for Windows 10 and 11",
+    // Search snippets: under ~160 characters.
     description:
-      "A Dynamic Island for the top of your Windows desktop: music, Claude Code and Codex sessions, notifications, timers, downloads and more. Free and open source.",
+      "A free, open-source Dynamic Island for Windows 10 and 11: music, Claude Code and Codex sessions, notifications, timers and downloads at the top of your screen.",
     privacyTitle: "Privacy Policy · Dynamo",
+    privacyDescription:
+      "What data Dynamo, the Dynamic Island for Windows, reads on your computer, what it sends to the services you connect, and how to remove it.",
+    imageAlt: "Dynamo, a Dynamic Island for Windows, showing Claude Code sessions and plan limits",
+    notFoundTitle: "Page not found · Dynamo",
+    notFoundBody: "This page doesn't exist, or it moved.",
+    notFoundLink: "Go to the home page",
   },
   nav: {
     label: "Main",

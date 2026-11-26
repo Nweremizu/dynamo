@@ -1,0 +1,15 @@
+// Cloudflare Workers deploys the built site as static files: no server code,
+// no adapter. With this file present, `wrangler deploy` uploads `dist/` as is
+// instead of trying to configure the project itself.
+{
+	"$schema": "https://unpkg.com/wrangler/config-schema.json",
+	"name": "dynamo",
+	"compatibility_date": "2026-11-26",
+	"assets": {
+		"directory": "./dist",
+		// Unknown URLs get dist/404.html with a 404 status.
+		"not_found_handling": "404-page",
+		// `/privacy` redirects to `/privacy/`: one URL per page.
+		"html_handling": "auto-trailing-slash",
+	},
+}

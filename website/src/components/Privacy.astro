@@ -2,6 +2,7 @@
 import { getEntry, render } from "astro:content";
 import Base from "../layouts/Base.astro";
 import { href, strings, type Lang } from "../i18n";
+import { privacyGraph } from "../seo";
 
 interface Props {
   lang: Lang;
@@ -9,13 +10,13 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = strings[lang];
-// Entry ids come from the file names in docs/privacy.
-const entry = await getEntry("privacy", lang === "en" ? "index" : "pt-br");
+// The English policy (docs/privacy/index.md).
+const entry = await getEntry("privacy", "index");
 if (!entry) throw new Error(`Missing privacy policy for ${lang}`);
 const { Content } = await render(entry);
 ---
 
-<Base lang={lang} title={t.meta.privacyTitle} page="privacy">
+<Base lang={lang} title={t.meta.privacyTitle} description={t.meta.privacyDescription} page="privacy" jsonLd={privacyGraph(Astro.site!, lang)}>
   <main class="policy">
     <a class="back" href={href(lang)}>{t.policy.back}</a>
     <article>

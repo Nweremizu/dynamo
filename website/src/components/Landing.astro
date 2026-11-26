@@ -3,6 +3,8 @@ import { Image } from "astro:assets";
 import Base from "../layouts/Base.astro";
 import Island from "./Island.astro";
 import { DOWNLOAD, LINKS, REPO, asset, href, strings, type Lang } from "../i18n";
+import { homeGraph } from "../seo";
+import social from "../../../docs/social-preview.png";
 import pkg from "../../../package.json";
 
 // Captured from the browser preview with a transparent backdrop, so each island
@@ -44,13 +46,20 @@ const bento = [
   { ...tiles.fitswise, src: fitswise, span: 3 },
 ];
 const looks = [lookDynamic, lookClassic, lookMono, lookAurora];
+const site = Astro.site!;
+const jsonLd = homeGraph(
+  site,
+  lang,
+  new URL(social.src, site).href,
+  [agents, music, notifications, pomodoro, shelf, calendar].map((shot) => new URL(shot.src, site).href),
+);
 
 const curl = `curl -X POST http://127.0.0.1:5199/notify \\
   -H "Content-Type: application/json" \\
   -d '{"title":"Deploy done","icon":"check"}'`;
 ---
 
-<Base lang={lang} title={t.meta.title} page="" island>
+<Base lang={lang} title={t.meta.title} page="" island jsonLd={jsonLd}>
   <header class="hero">
     <Island lang={lang} />
     <div class="wrap hero-copy">
@@ -84,9 +93,8 @@ const curl = `curl -X POST http://127.0.0.1:5199/notify \\
         <p>{t.demo.body}</p>
       </div>
       <div class="card frame">
-        <video class="demo-video" autoplay muted loop playsinline preload="metadata" width="1600" height="600" poster={asset("media/demo-poster.jpg")} aria-label={t.demo.alt}>
-          <source src={asset("media/demo.mp4")} type="video/mp4" />
-        </video>
+        <!-- Loaded only as it nears the screen (script below), so it costs the first paint nothing. -->
+        <video class="demo-video" muted loop playsinline preload="none" width="1600" height="600" poster={asset("media/demo-poster.jpg")} aria-label={t.demo.alt} data-src={asset("media/demo.mp4")}></video>
       </div>
     </section>
 
@@ -257,6 +265,24 @@ const curl = `curl -X POST http://127.0.0.1:5199/notify \\
     </section>
   </main>
 </Base>
+
+<script>
+  // The demo video starts downloading when it's about to scroll into view, and plays
+  // (unless the visitor asked for less motion, then it shows its poster and controls).
+  for (const video of document.querySelectorAll<HTMLVideoElement>("video[data-src]")) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        observer.disconnect();
+        video.src = video.dataset.src!;
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) video.controls = true;
+        else video.play().catch(() => (video.controls = true));
+      },
+      { rootMargin: "400px 0px" },
+    );
+    observer.observe(video);
+  }
+</script>
 
 <style>
   .visually-hidden {

@@ -412,6 +412,19 @@ src-tauri/src/
 
 Copy `src/locales/en.json5` to `src/locales/<code>.json5` (e.g. `es.json5`), translate the values and set `language.name`. Both the UI and the tray pick it up automatically.
 
+### Website
+
+The site in `website/` (Astro, fully static) is a Cloudflare Worker that serves the built files, deployed straight from this repository. In the Cloudflare dashboard, **Workers & Pages → Create → Import a repository**, pick it and use:
+
+| Setting | Value |
+| --- | --- |
+| Root directory | `website` |
+| Build command | `bun run build` |
+| Deploy command | `npx wrangler deploy` (reads [`website/wrangler.jsonc`](website/wrangler.jsonc)) |
+| Build variables | `SITE_URL` = the site's address (`https://dynamo.<your-subdomain>.workers.dev`, or a custom domain later) |
+
+Every push to `main` then rebuilds it. `SITE_URL` is what the canonical URLs, the sitemap, `robots.txt`, `llms.txt` and the structured data point to; the build stops if it's missing, and it has to change (and redeploy) when the address does. Run the site locally with `bun install && bun run dev` in `website/`.
+
 ### Releasing
 
 ```sh
