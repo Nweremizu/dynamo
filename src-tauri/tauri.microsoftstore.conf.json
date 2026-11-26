@@ -1,0 +1,7 @@
+{
+	"productName": "Dynamo",
+	"identifier": "app.dynamo.store",
+	"bundle": {
+		"createUpdaterArtifacts": false
+	}
+}
