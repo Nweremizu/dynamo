@@ -105,6 +105,10 @@ export function Tabs({
 	const clipRef = useRef<HTMLDivElement>(null);
 	const rowRef = useRef<HTMLDivElement>(null);
 	const [frame, setFrame] = useState<{ left: number; width: number } | null>(null);
+	// The tabs and their activity dots (in the row, so they widen a tab).
+	const ids = entries.map((e) => `${e.module.id}${e.view.active ? "*" : ""}`).join();
+	// Not on every render: the island re-renders on every provider update, and each measure forces a layout.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: `current`, `ids`, `iconsOnly` and `t` change the measured widths
 	useLayoutEffect(() => {
 		const items = rowRef.current?.children;
 		const first = items?.[start] as HTMLElement | undefined;
@@ -113,7 +117,7 @@ export function Tabs({
 		const left = hiddenLeft ? first.offsetLeft - PEEK : 0;
 		const width = last.offsetLeft + last.offsetWidth + (hiddenRight ? PEEK : 0) - left;
 		setFrame((f) => (f?.left === left && f.width === width ? f : { left, width }));
-	});
+	}, [start, end, hiddenLeft, hiddenRight, current, ids, iconsOnly, t]);
 
 	// Squeezed by the buttons beside it (a wide `extra`, a narrow island): clip and fade the right edge too.
 	const [squeezed, setSqueezed] = useState(false);
