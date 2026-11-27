@@ -22,7 +22,9 @@
 	--animate-gh-pulse: gh-pulse 1.6s ease-in-out infinite;
 	--animate-spin-fast: spin 0.9s linear infinite;
 	--animate-marquee: marquee var(--marquee-duration) ease-in-out infinite alternate;
-	--animate-rim-spin: rim-spin 7s linear infinite;
+	/* 210 steps over 7 s = 30 updates/s. A linear spin makes the compositor present
+	   every vsync (120 Hz here); unchanged steps skip the frame, halving GPU use. */
+	--animate-rim-spin: rim-spin 7s steps(210) infinite;
 	--animate-agent-halo: agent-halo 1.6s ease-in-out 4 both;
 	/* Agent icon loops: CSS keyframes, so no JS runs per frame (Motion ticks SVG transforms in JS). */
 	--animate-claude-turn: claude-turn 7s linear infinite;
