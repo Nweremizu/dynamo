@@ -23,14 +23,14 @@
 	--animate-spin-fast: spin 0.9s linear infinite;
 	--animate-marquee: marquee var(--marquee-duration) ease-in-out infinite alternate;
 	--animate-rim-spin: rim-spin 7s linear infinite;
+	--animate-agent-halo: agent-halo 1.6s ease-in-out 4 both;
 	/* Agent icon loops: CSS keyframes, so no JS runs per frame (Motion ticks SVG transforms in JS). */
 	--animate-claude-turn: claude-turn 7s linear infinite;
 	--animate-claude-breathe: claude-breathe 1.8s ease-in-out infinite;
-	--animate-claude-nudge: claude-nudge 2.2s ease-in-out infinite;
-	--animate-codex-type: codex-type 1s ease-in-out infinite;
+	--animate-claude-nudge: claude-nudge 2.2s ease-in-out 3;
 	--animate-codex-blink: codex-blink 1.05s step-end infinite;
-	--animate-codex-blink-fast: codex-blink 0.6s step-end infinite;
-	--animate-codex-hop: codex-hop 1.5s ease-out infinite;
+	--animate-codex-blink-fast: codex-blink 0.6s step-end 10;
+	--animate-codex-hop: codex-hop 1.5s ease-out 4;
 	--font-glyph: "Segoe Fluent Icons", "Segoe MDL2 Assets", "Segoe UI Symbol", sans-serif;
 	--font-sans: "Timeless Sans", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
 	--font-mono: "Cascadia Code", Consolas, monospace;
@@ -87,15 +87,30 @@
 	}
 }
 
-/* The Windows Island rim's gradient turns around the island. */
-@property --rim-angle {
-	syntax: "<angle>";
-	inherits: false;
-	initial-value: 0deg;
+/* Rotate a painted gradient under the stationary border mask. The square
+   covers the entire mask at every angle, including its padded edges. */
+.island-rim-gradient {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: calc(max(142cqw, 142cqh) + 3 * var(--rim-w));
+	aspect-ratio: 1;
+	translate: -50% -50%;
+	background-image: var(--rim-bg);
 }
 @keyframes rim-spin {
 	to {
-		--rim-angle: 360deg;
+		rotate: 360deg;
+	}
+}
+
+@keyframes agent-halo {
+	0%,
+	100% {
+		opacity: 0.9;
+	}
+	50% {
+		opacity: 0.25;
 	}
 }
 
@@ -168,16 +183,14 @@
 		rotate: 0deg;
 	}
 }
-@keyframes codex-type {
-	50% {
-		translate: 0.9px;
-	}
-}
-/* On for the first half, off for the second, like a terminal cursor. */
+/* Cover the cursor cutout in the second half, like a terminal blink. */
 @keyframes codex-blink {
-	50%,
+	0%,
 	100% {
 		opacity: 0;
+	}
+	50% {
+		opacity: 1;
 	}
 }
 /* A hop (0.5 s), then a pause (1 s). */

@@ -49,7 +49,7 @@ export function Surface({
 					animate={{
 						opacity: 1,
 						scale: 1,
-						filter: "blur(0px)",
+						filter: "none",
 						transition: {
 							...SETTLE,
 							opacity: { duration: 0.24, ease: "easeOut" },

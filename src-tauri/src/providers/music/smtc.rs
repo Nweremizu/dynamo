@@ -1,7 +1,6 @@
 //! Now-playing metadata and transport controls through SMTC.
 
 use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc::{self, Receiver, RecvTimeoutError, Sender};
 use std::time::{Duration, Instant};
 
@@ -18,6 +17,7 @@ use windows::Storage::Streams::DataReader;
 use windows::core::Result;
 
 use super::focus::TitleWatch;
+use super::level::Meter;
 use super::spotify::{self, Spotify};
 use super::{ID, MusicState};
 use crate::hub::Hub;
@@ -50,7 +50,7 @@ const WINDOW_CHECK: Duration = Duration::from_millis(100);
 /// 100ns ticks between 1601-01-01 and 1970-01-01.
 const EPOCH_DIFF_TICKS: i64 = 116_444_736_000_000_000;
 
-pub fn poll_loop(hub: Arc<Hub>, playing_flag: Arc<AtomicBool>, spotify: Arc<Spotify>) {
+pub fn poll_loop(hub: Arc<Hub>, meter: Arc<Meter>, spotify: Arc<Spotify>) {
     let mut manager: Option<SessionManager> = None;
     let mut track_key = String::new();
     let mut published: Option<MusicState> = None;
@@ -147,7 +147,7 @@ pub fn poll_loop(hub: Arc<Hub>, playing_flag: Arc<AtomicBool>, spotify: Arc<Spot
                 MusicState::default()
             }
         };
-        playing_flag.store(state.playing, Ordering::Relaxed);
+        meter.set_playing(state.playing);
         // The island projects the position from `positionAt`; while that stays
         // right, a new poll changes nothing on screen (and the state carries the cover).
         if !published.as_ref().is_some_and(|old| on_course(old, &state)) {

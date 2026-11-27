@@ -96,6 +96,15 @@ fn target(app: &AppHandle, win: &WebviewWindow) -> Option<Monitor> {
     };
     let avoid = matches!(settings.get(AVOID_MAXIMIZED_KEY), Some(Value::Bool(true)));
 
+    // The default path only needs the primary monitor's geometry, not every
+    // display's device path and model name from QueryDisplayConfig.
+    if wanted == PRIMARY
+        && !avoid
+        && let Ok(Some(primary)) = win.primary_monitor()
+    {
+        return Some(primary);
+    }
+
     let mut screens = screens(win);
     // A fixed monitor that's unplugged falls back to the primary one.
     let preferred = screens

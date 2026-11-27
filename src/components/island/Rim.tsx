@@ -8,10 +8,10 @@ import { type Appearance, rimBackground } from "../../core/appearance";
  * squarer than circular ones, and its black would show outside the ring.
  */
 const rim = tv({
-	base: "pointer-events-none absolute inset-0 z-2 rounded-[inherit] [corner-shape:inherit] bg-(image:--rim-bg) p-(--rim-w) [mask-image:linear-gradient(#000_0_0),linear-gradient(#000_0_0)] [mask-clip:content-box,border-box] [mask-composite:exclude]",
+	base: "pointer-events-none absolute inset-0 z-2 rounded-[inherit] [corner-shape:inherit] p-(--rim-w) [mask-image:linear-gradient(#000_0_0),linear-gradient(#000_0_0)] [mask-clip:content-box,border-box] [mask-composite:exclude]",
 	variants: {
 		classic: { true: "bg-white/9" },
-		animated: { true: "animate-rim-spin" },
+		animated: { true: "[container-type:size]", false: "bg-(image:--rim-bg)" },
 	},
 });
 
@@ -25,11 +25,14 @@ export function RimRing({
 	width: number;
 	animate?: boolean;
 }) {
+	const animated = !!background && !!animate;
 	return (
 		<span
-			className={rim({ classic: !background, animated: !!background && animate })}
+			className={rim({ classic: !background, animated })}
 			style={{ "--rim-bg": background, "--rim-w": `${width}px` } as CSSProperties}
-		/>
+		>
+			{animated && <span className="island-rim-gradient animate-rim-spin motion-reduce:animate-none" />}
+		</span>
 	);
 }
 

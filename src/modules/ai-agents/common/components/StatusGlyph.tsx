@@ -47,7 +47,8 @@ export function StatusIcon({ status, color, label }: { status: AgentStatus; colo
 
 /**
  * The agent's own icon, still, with its state around it: an orbiting arc
- * while working, a soft amber halo while waiting, a green check when done.
+ * while working, an amber halo that pulses briefly when waiting starts, and
+ * a green check when done.
  */
 export function StatusGlyph({
 	agent,
@@ -65,12 +66,10 @@ export function StatusGlyph({
 				<Spinner className="absolute opacity-70" style={{ width: ring, height: ring, color: agent.color }} />
 			)}
 			{status === "waiting" && (
-				<motion.span
+				<span
 					aria-hidden
-					className="absolute rounded-full bg-warning/30"
+					className="absolute animate-agent-halo rounded-full bg-warning/30 motion-reduce:animate-none"
 					style={{ width: ring, height: ring }}
-					animate={{ opacity: [0.9, 0.25, 0.9] }}
-					transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
 				/>
 			)}
 			<span className="relative grid text-(--agent)" style={agentPaint(agent)}>

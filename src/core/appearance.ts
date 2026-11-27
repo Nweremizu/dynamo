@@ -93,7 +93,7 @@ export function glassLevel(value: unknown): GlassLevel {
 export function rimBackground(colors: string[]) {
 	if (!colors.length) return undefined;
 	const stops = colors.length === 1 ? [colors[0], colors[0]] : [...colors, colors[0]];
-	return `conic-gradient(from var(--rim-angle), ${stops.join(", ")})`;
+	return `conic-gradient(${stops.join(", ")})`;
 }
 
 /** Swatch fill for a preset in the settings. */

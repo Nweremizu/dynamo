@@ -106,6 +106,7 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             providers::get_snapshot,
             providers::provider_action,
+            providers::music::set_music_level_active,
             window::set_hit_rects,
             glass::set_glass_shapes,
             glass::set_glass_level,

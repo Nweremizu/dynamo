@@ -38,23 +38,20 @@ pub fn last_foreground() -> Option<windows::Win32::Foundation::HWND> {
 }
 
 #[cfg(windows)]
-fn track_foreground(app: &AppHandle) {
-    use windows::Win32::UI::WindowsAndMessaging::GetForegroundWindow;
-    let fg = unsafe { GetForegroundWindow() };
-    if fg.is_invalid() {
-        return;
-    }
-    let ours = app
-        .webview_windows()
-        .values()
-        .any(|w| w.hwnd().is_ok_and(|h| h.0 == fg.0));
-    if !ours {
-        LAST_FOREGROUND.store(fg.0 as isize, Ordering::Relaxed);
+fn track_foreground(fg: isize) {
+    use windows::Win32::Foundation::HWND;
+    use windows::Win32::UI::WindowsAndMessaging::GetWindowThreadProcessId;
+    let mut pid = 0;
+    if fg != 0
+        && unsafe { GetWindowThreadProcessId(HWND(fg as *mut _), Some(&mut pid)) } != 0
+        && pid != std::process::id()
+    {
+        LAST_FOREGROUND.store(fg, Ordering::Relaxed);
     }
 }
 
 #[cfg(not(windows))]
-fn track_foreground(_: &AppHandle) {}
+fn track_foreground(_: isize) {}
 
 /// Lets the island take keyboard focus (typing a question).
 #[tauri::command]
@@ -182,6 +179,15 @@ pub fn is_interacting(app: &AppHandle) -> bool {
 
 pub fn spawn_hit_test(app: AppHandle) {
     std::thread::spawn(move || {
+        let Some(win) = app.get_webview_window(ISLAND_LABEL) else {
+            return;
+        };
+        #[cfg(windows)]
+        let hwnd = win.hwnd().map(|h| h.0 as isize).unwrap_or_default();
+        #[cfg(not(windows))]
+        let hwnd = 0;
+        let hit_state = app.state::<HitState>();
+        let drag_state = app.state::<DragState>();
         let mut ignoring: Option<bool> = None;
         let mut hovering = false;
         let mut fullscreen = false;
@@ -194,10 +200,6 @@ pub fn spawn_hit_test(app: AppHandle) {
         let mut file_drag = false;
         loop {
             std::thread::sleep(Duration::from_millis(25));
-            let Some(win) = app.get_webview_window(ISLAND_LABEL) else {
-                continue;
-            };
-
             // Fullscreen check is cheaper to run a few times per second.
             let mut fullscreen_left = false;
             if tick.is_multiple_of(12) {
@@ -214,22 +216,22 @@ pub fn spawn_hit_test(app: AppHandle) {
                 }
             }
             tick = tick.wrapping_add(1);
-            if tick.is_multiple_of(4) {
-                track_foreground(&app);
-            }
-
             let fg = foreground_window();
             let fg_changed = fg != last_fg;
-            last_fg = fg;
+            if fg_changed {
+                track_foreground(fg);
+                last_fg = fg;
+            }
             let island_interactive = !fullscreen || !hide_in_fullscreen;
             let interaction_changed = island_interactive != was_interactive;
             was_interactive = island_interactive;
             if island_interactive {
-                ensure_topmost(&win, fg_changed || fullscreen_left || interaction_changed);
+                ensure_topmost(hwnd, fg_changed || fullscreen_left || interaction_changed);
             }
 
-            let dragging = app.state::<DragState>().0.load(Ordering::Relaxed);
-            let over_island = cursor_inside(&app, &win, 0.0);
+            let dragging = drag_state.0.load(Ordering::Relaxed);
+            let cursor = local_cursor(&win, hwnd);
+            let over_island = cursor_inside(&hit_state, cursor, 0.0);
             let inside = island_interactive && (dragging || over_island);
 
             // A drag that started in another app (files from Explorer…). The
@@ -248,7 +250,7 @@ pub fn spawn_hit_test(app: AppHandle) {
             let drop_zone = island_interactive
                 && down
                 && !pressed_inside
-                && cursor_inside(&app, &win, DROP_MARGIN);
+                && cursor_inside(&hit_state, cursor, DROP_MARGIN);
             let dragging_in = down && !pressed_inside && (file_drag || drop_zone);
             if dragging_in != file_drag {
                 file_drag = dragging_in;
@@ -283,22 +285,50 @@ fn left_button_down() -> bool {
 }
 
 /// Cursor over one of the frontend's rects, grown by `margin` CSS px.
-fn cursor_inside(app: &AppHandle, win: &WebviewWindow, margin: f64) -> bool {
-    let Some((cx, cy)) = cursor_pos() else {
+fn cursor_inside(state: &HitState, cursor: Option<(f64, f64)>, margin: f64) -> bool {
+    let Some((x, y)) = cursor else {
         return false;
     };
-    let (Ok(origin), Ok(scale)) = (win.outer_position(), win.scale_factor()) else {
-        return false;
-    };
-    let rects = app.state::<HitState>();
-    let rects = rects.0.lock().unwrap();
+    let rects = state.0.lock().unwrap();
     rects.iter().any(|r| {
-        let left = origin.x as f64 + (r.x - margin) * scale;
-        let top = origin.y as f64 + (r.y - margin).max(0.0) * scale;
-        let right = origin.x as f64 + (r.x + r.width + margin) * scale;
-        let bottom = origin.y as f64 + (r.y + r.height + margin) * scale;
-        cx >= left && cx <= right && cy >= top && cy <= bottom
+        x >= r.x - margin
+            && x <= r.x + r.width + margin
+            && y >= (r.y - margin).max(0.0)
+            && y <= r.y + r.height + margin
     })
+}
+
+#[cfg(windows)]
+fn local_cursor(_: &WebviewWindow, hwnd: isize) -> Option<(f64, f64)> {
+    use windows::Win32::Foundation::{HWND, RECT};
+    use windows::Win32::UI::HiDpi::GetDpiForWindow;
+    use windows::Win32::UI::WindowsAndMessaging::GetWindowRect;
+
+    // The hit-test worker can read this native geometry directly. Tauri's
+    // window getters dispatch through the UI event loop on every call.
+    let hwnd = HWND(hwnd as *mut _);
+    let (x, y) = cursor_pos()?;
+    let mut rect = RECT::default();
+    unsafe { GetWindowRect(hwnd, &mut rect) }.ok()?;
+    let dpi = unsafe { GetDpiForWindow(hwnd) };
+    let scale = f64::from(dpi) / 96.0;
+    (dpi != 0).then(|| {
+        (
+            (x - f64::from(rect.left)) / scale,
+            (y - f64::from(rect.top)) / scale,
+        )
+    })
+}
+
+#[cfg(not(windows))]
+fn local_cursor(win: &WebviewWindow, _: isize) -> Option<(f64, f64)> {
+    let (x, y) = cursor_pos()?;
+    let origin = win.outer_position().ok()?;
+    let scale = win.scale_factor().ok()?;
+    Some((
+        (x - f64::from(origin.x)) / scale,
+        (y - f64::from(origin.y)) / scale,
+    ))
 }
 
 #[cfg(windows)]
@@ -333,17 +363,17 @@ fn foreground_window() -> isize {
 /// goes missing, and on `force` (foreground change) so another topmost window
 /// that just got activated doesn't stay above it.
 #[cfg(windows)]
-fn ensure_topmost(win: &WebviewWindow, force: bool) {
+fn ensure_topmost(hwnd: isize, force: bool) {
     use windows::Win32::Foundation::HWND;
     use windows::Win32::UI::WindowsAndMessaging::{
         GWL_EXSTYLE, GetWindowLongPtrW, HWND_TOPMOST, SWP_NOACTIVATE, SWP_NOMOVE,
         SWP_NOOWNERZORDER, SWP_NOSIZE, SetWindowPos, WS_EX_TOPMOST,
     };
 
-    let Ok(hwnd) = win.hwnd() else {
+    if hwnd == 0 {
         return;
-    };
-    let hwnd = HWND(hwnd.0);
+    }
+    let hwnd = HWND(hwnd as *mut _);
     unsafe {
         let topmost = GetWindowLongPtrW(hwnd, GWL_EXSTYLE) & WS_EX_TOPMOST.0 as isize != 0;
         if topmost && !force {
@@ -363,7 +393,7 @@ fn ensure_topmost(win: &WebviewWindow, force: bool) {
 }
 
 #[cfg(not(windows))]
-fn ensure_topmost(_: &WebviewWindow, _: bool) {}
+fn ensure_topmost(_: isize, _: bool) {}
 
 /// The island is an overlay, not an app window: it must never look or act
 /// like one.
@@ -547,4 +577,24 @@ fn fullscreen_app_active(island: &WebviewWindow) -> bool {
 #[cfg(not(windows))]
 fn fullscreen_app_active(_: &WebviewWindow) -> bool {
     false
+}
+
+#[cfg(test)]
+mod hit_tests {
+    use super::{DROP_MARGIN, HitRect, HitState, Mutex, cursor_inside};
+
+    #[test]
+    fn hit_and_drop_regions_use_window_local_coordinates() {
+        let state = HitState(Mutex::new(vec![HitRect {
+            x: 20.0,
+            y: 8.0,
+            width: 100.0,
+            height: 30.0,
+        }]));
+        assert!(cursor_inside(&state, Some((120.0, 38.0)), 0.0));
+        assert!(!cursor_inside(&state, Some((121.0, 38.0)), 0.0));
+        assert!(cursor_inside(&state, Some((121.0, 38.0)), DROP_MARGIN));
+        assert!(!cursor_inside(&state, Some((100.0, -1.0)), DROP_MARGIN));
+        assert!(!cursor_inside(&state, None, DROP_MARGIN));
+    }
 }

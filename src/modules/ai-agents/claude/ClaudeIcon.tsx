@@ -10,10 +10,10 @@ const PATH =
 /**
  * What the starburst does in each state:
  * - working: turns slowly while it breathes, like Claude thinking;
- * - waiting: a nudge every couple of seconds, a tap on the shoulder;
+ * - waiting: a few nudges on entry, then still;
  * - done / limits reset: one bloom, a quarter turn with a little pop;
  * - idle: still.
- * The endless loops are CSS (`styles.css`) on HTML wrappers, one property each: Chrome
+ * The CSS animations (`styles.css`) run on HTML wrappers, one property each: Chrome
  * runs those on the compositor, but not `rotate`/`scale` on an SVG element. Motion does the one-shots.
  */
 const TURN: Partial<Record<AgentStatus, string>> = {

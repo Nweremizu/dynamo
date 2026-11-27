@@ -5,8 +5,7 @@
 //! session is loud. So we read the peak of every *active* audio session on
 //! every active output device and use the loudest one.
 
-use std::sync::Arc;
-use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Condvar, Mutex};
 use std::time::Duration;
 
 use windows::Win32::Media::Audio::Endpoints::IAudioMeterInformation;
@@ -23,33 +22,87 @@ use super::LEVEL_EVENT;
 use crate::hub::Hub;
 
 const FRAME: Duration = Duration::from_millis(33);
+/// Below the threshold the visualizer displays dots.
+const SILENCE: f32 = 0.004;
 /// Re-scan sessions about once a second (they come and go).
 const RESCAN_EVERY: u32 = 30;
 
-pub fn level_loop(hub: Arc<Hub>, playing: Arc<AtomicBool>) {
+#[derive(Default)]
+pub struct Meter {
+    activity: Mutex<Activity>,
+    changed: Condvar,
+}
+
+#[derive(Default)]
+struct Activity {
+    playing: bool,
+    visible: bool,
+}
+
+impl Activity {
+    fn active(&self) -> bool {
+        self.playing && self.visible
+    }
+}
+
+impl Meter {
+    pub(super) fn set_playing(&self, playing: bool) {
+        self.update(|state| state.playing = playing);
+    }
+
+    pub(super) fn set_visible(&self, visible: bool) {
+        self.update(|state| state.visible = visible);
+    }
+
+    fn update(&self, update: impl FnOnce(&mut Activity)) {
+        let mut activity = self.activity.lock().unwrap();
+        let was_active = activity.active();
+        update(&mut activity);
+        if activity.active() != was_active {
+            self.changed.notify_one();
+        }
+    }
+}
+
+pub fn level_loop(hub: Arc<Hub>, meter: Arc<Meter>) {
     unsafe {
         let _ = CoInitializeEx(None, COINIT_MULTITHREADED);
     }
-    let mut meters: Vec<IAudioMeterInformation> = Vec::new();
-    let mut tick = 0u32;
     loop {
-        if !playing.load(Ordering::Relaxed) {
-            meters.clear();
-            tick = 0;
-            std::thread::sleep(Duration::from_millis(250));
-            continue;
-        }
-        if tick.is_multiple_of(RESCAN_EVERY) {
-            meters = active_session_meters().unwrap_or_default();
-        }
-        tick = tick.wrapping_add(1);
+        drop(
+            meter
+                .changed
+                .wait_while(meter.activity.lock().unwrap(), |state| !state.active())
+                .unwrap(),
+        );
+        let mut meters = Vec::new();
+        let mut tick = 0u32;
+        let mut was_silent = true;
+        loop {
+            if tick.is_multiple_of(RESCAN_EVERY) {
+                meters = active_session_meters().unwrap_or_default();
+            }
+            tick = tick.wrapping_add(1);
 
-        let level = meters
-            .iter()
-            .filter_map(|m| unsafe { m.GetPeakValue() }.ok())
-            .fold(0.0f32, f32::max);
-        hub.transient(LEVEL_EVENT, level);
-        std::thread::sleep(FRAME);
+            let level = meters
+                .iter()
+                .filter_map(|m| unsafe { m.GetPeakValue() }.ok())
+                .fold(0.0f32, f32::max);
+            let silent = level < SILENCE;
+            if !silent || !was_silent {
+                hub.transient(LEVEL_EVENT, if silent { 0.0 } else { level });
+            }
+            was_silent = silent;
+            let (state, _) = meter
+                .changed
+                .wait_timeout_while(meter.activity.lock().unwrap(), FRAME, |state| {
+                    state.active()
+                })
+                .unwrap();
+            if !state.active() {
+                break;
+            }
+        }
     }
 }
 
@@ -83,4 +136,25 @@ fn active_session_meters() -> Result<Vec<IAudioMeterInformation>> {
         }
     }
     Ok(meters)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Meter;
+
+    #[test]
+    fn samples_only_when_playing_and_visible() {
+        let meter = Meter::default();
+        let active = || meter.activity.lock().unwrap().active();
+        assert!(!active());
+        meter.set_playing(true);
+        assert!(!active());
+        meter.set_visible(true);
+        assert!(active());
+        meter.set_playing(false);
+        assert!(!active());
+        meter.set_playing(true);
+        meter.set_visible(false);
+        assert!(!active());
+    }
 }

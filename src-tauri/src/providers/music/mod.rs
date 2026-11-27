@@ -13,10 +13,10 @@ pub mod volume;
 mod youtube;
 
 use std::sync::Arc;
-use std::sync::atomic::AtomicBool;
 
 use serde::Serialize;
 use serde_json::Value;
+use tauri::{Manager, State, WebviewWindow};
 
 use super::Provider;
 use crate::hub::Hub;
@@ -55,7 +55,7 @@ pub struct MusicState {
 
 #[derive(Default)]
 pub struct MusicProvider {
-    playing: Arc<AtomicBool>,
+    meter: Arc<level::Meter>,
     spotify: Arc<spotify::Spotify>,
 }
 
@@ -65,13 +65,13 @@ impl Provider for MusicProvider {
     }
 
     fn start(self: Arc<Self>, hub: Arc<Hub>) {
+        hub.app().manage(self.meter.clone());
         self.spotify.start(hub.clone());
-        let (playing, poll_hub, spotify) =
-            (self.playing.clone(), hub.clone(), self.spotify.clone());
-        std::thread::spawn(move || smtc::poll_loop(poll_hub, playing, spotify));
+        let (meter, poll_hub, spotify) = (self.meter.clone(), hub.clone(), self.spotify.clone());
+        std::thread::spawn(move || smtc::poll_loop(poll_hub, meter, spotify));
 
-        let playing = self.playing.clone();
-        std::thread::spawn(move || level::level_loop(hub, playing));
+        let meter = self.meter.clone();
+        std::thread::spawn(move || level::level_loop(hub, meter));
     }
 
     fn action(&self, action: &str, payload: Value) -> Result<Value, String> {
@@ -93,5 +93,16 @@ impl Provider for MusicProvider {
         }
         smtc::control(action, payload).map_err(|e| e.to_string())?;
         Ok(Value::Null)
+    }
+}
+
+#[tauri::command]
+pub fn set_music_level_active(
+    window: WebviewWindow,
+    meter: State<'_, Arc<level::Meter>>,
+    active: bool,
+) {
+    if window.label() == crate::window::ISLAND_LABEL {
+        meter.set_visible(active);
     }
 }
