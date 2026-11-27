@@ -549,6 +549,7 @@
       windowsDesc: "悬浮胶囊形态，静止时显示时钟并带彩色光边，模块切换图标位置可调整。",
     },
     windowsOnly: "仅在 Windows 灵动岛样式下可用。",
+    switchToWindows: "切换到 Windows 灵动岛",
     tabsPosition: {
       label: "模块切换图标位置",
       desc: "选择展开的灵动岛中模块图标的显示位置。",

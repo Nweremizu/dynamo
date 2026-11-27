@@ -341,6 +341,7 @@ export type MessageKey =
 	| "appearance.style.windows"
 	| "appearance.style.windowsDesc"
 	| "appearance.windowsOnly"
+	| "appearance.switchToWindows"
 	| "appearance.tabsPosition.label"
 	| "appearance.tabsPosition.desc"
 	| "appearance.tabsPosition.top"

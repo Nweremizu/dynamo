@@ -563,6 +563,7 @@
       windowsDesc: "A floating pill with a clock at rest, a colored rim and configurable module switcher position.",
     },
     windowsOnly: "Available in the Windows Island style.",
+    switchToWindows: "Switch to Windows Island",
     tabsPosition: {
       label: "Module switcher position",
       desc: "Choose where the module icons appear in the expanded island.",

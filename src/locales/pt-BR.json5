@@ -518,6 +518,7 @@
       windowsDesc: "Uma pílula flutuante com relógio em repouso, borda colorida e posição dos módulos configurável.",
     },
     windowsOnly: "Disponível no estilo Windows Island.",
+    switchToWindows: "Mudar para Windows Island",
     tabsPosition: {
       label: "Posição dos ícones de módulos",
       desc: "Escolha onde os ícones aparecem na ilha expandida.",
