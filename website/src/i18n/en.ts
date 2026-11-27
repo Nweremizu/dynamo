@@ -74,7 +74,7 @@ const en = {
   },
   stats: [
     ["16", "built-in modules, and plugins for more"],
-    ["3", "languages: English, Portuguese and Chinese"],
+    ["2", "island styles: top-edge notch or floating pill"],
     ["0", "accounts, ads or telemetry"],
     ["1", "installer, no admin rights needed"],
   ],
