@@ -137,6 +137,8 @@ jobs:
           gh release upload "v$version" $zip --clobber
 
   msix:
+    # Skipped until the Store identity variables are set (see "Build and pack").
+    if: ${{ vars.MSIX_IDENTITY_NAME != '' }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
